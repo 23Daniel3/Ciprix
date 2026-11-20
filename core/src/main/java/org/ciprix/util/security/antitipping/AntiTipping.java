@@ -55,7 +55,9 @@ public class AntiTipping {
     isTipping =
         Math.abs(pitch) > tippingThresholdRadians || Math.abs(roll) > tippingThresholdRadians;
 
-    tiltDirection = new Rotation2d(Math.atan2(roll, pitch));
+    // Direction the robot is falling toward, in the robot frame (0 = front, CCW positive).
+    // Positive pitch puts the front down (+X); positive roll puts the right side down (-Y).
+    tiltDirection = new Rotation2d(Math.atan2(-roll, pitch));
     yawDirectionDeg = tiltDirection.getDegrees();
 
     inclinationMagnitude = Math.hypot(Units.radiansToDegrees(pitch), Units.radiansToDegrees(roll));
@@ -63,10 +65,10 @@ public class AntiTipping {
     correctionSpeed = kP * inclinationMagnitude;
     correctionSpeed = MathUtil.clamp(correctionSpeed, -maxCorrectionSpeed, maxCorrectionSpeed);
 
-    Translation2d correctionVector =
-        new Translation2d(0, 1).rotateBy(tiltDirection).times(correctionSpeed);
+    // Drive toward the low side to put the wheels back under the center of mass.
+    Translation2d correctionVector = new Translation2d(correctionSpeed, tiltDirection);
 
-    speeds = new ChassisSpeeds(correctionVector.getX(), -correctionVector.getY(), 0);
+    speeds = new ChassisSpeeds(correctionVector.getX(), correctionVector.getY(), 0);
 
     Logger.recordOutput("Subsystems/Drivetrain/AntiTipping/PitchRad", pitch);
     Logger.recordOutput("Subsystems/Drivetrain/AntiTipping/RollRad", roll);
