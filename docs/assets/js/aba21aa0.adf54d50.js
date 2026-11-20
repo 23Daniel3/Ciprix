@@ -1,0 +1,1 @@
+"use strict";(Array.isArray(self.webpackChunkciprix_docs)?self.webpackChunkciprix_docs:self.webpackChunkciprix_docs=[]).push([[742],{7093(s){s.exports=JSON.parse('{"name":"docusaurus-plugin-content-docs","id":"default"}')}}]);
