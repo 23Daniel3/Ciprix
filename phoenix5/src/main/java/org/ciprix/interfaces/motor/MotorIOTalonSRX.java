@@ -249,4 +249,9 @@ public class MotorIOTalonSRX extends MotorBase {
     motor.configPeakOutputForward(max);
     motor.configPeakOutputReverse(min);
   }
+
+  /** The Phoenix 5 object, for features this class does not cover. */
+  public TalonSRX getTalon() {
+    return motor;
+  }
 }

@@ -102,4 +102,9 @@ public class MotorIOVictorSPX extends BasicMotorBase {
     motor.configPeakOutputForward(max);
     motor.configPeakOutputReverse(min);
   }
+
+  /** The Phoenix 5 object, for features this class does not cover. */
+  public VictorSPX getVictor() {
+    return motor;
+  }
 }
