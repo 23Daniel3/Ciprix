@@ -21,6 +21,8 @@ It also adds more than 40 test classes and fixes the bugs those tests found.
 - **New guides:** [Controllers](controllers.md), [Zones](zones.md),
   [Driving helpers](driving-helpers.md), [Safety](safety.md) and
   [Tunables and dashboard](tunables-and-dashboard.md).
+- **Runnable examples** under `examples/`: `arm-elevator`, `rev-and-phoenix5`, `swerve-vision` and
+  `power-and-pit`. Each is a complete robot project built in CI against the library.
 
 ### Migrating from 2026.2.x
 
