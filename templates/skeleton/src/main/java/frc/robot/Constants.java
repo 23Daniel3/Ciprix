@@ -1,47 +1,36 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.RobotBase;
+import org.ciprix.CiprixSettings.Mode;
 
-/** Constantes do robo inteiro. As de cada subsistema ficam em {@code <Subsistema>Constants}. */
+/** Robot-wide constants. Each subsystem's constants live in {@code <Subsystem>Constants}. */
 public final class Constants {
   private Constants() {}
 
-  /** O que roda fora do robo: SIM (simulacao com fisica) ou REPLAY (roda um log de novo). */
+  /** What runs off-robot: {@link Mode#SIM} (physics simulation) or {@link Mode#REPLAY}. */
   public static final Mode simMode = Mode.SIM;
 
-  public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
-
-  /** Valores ajustaveis pelo dashboard. Desligue nas competicoes. */
+  /** Live-tunable values on the dashboard. Turn off at competitions. */
   public static final boolean tuningMode = true;
 
   public static final double CONTROLLER_DEADBAND = 0.08;
 
-  /** Alianca usada quando nao ha FMS nem Driver Station. */
+  /** Alliance assumed when neither the FMS nor the Driver Station provides one. */
   public static final Alliance DEFAULT_ALLIANCE = Alliance.Blue;
 
-  /** Campo de 2026 (REBUILT, versao soldada), em metros. */
+  /** 2026 field (REBUILT, welded), in meters. */
   public static final double FIELD_LENGTH_METERS = 16.541;
 
   public static final double FIELD_WIDTH_METERS = 8.069;
 
-  public enum Mode {
-    /** No robo de verdade. */
-    REAL,
-    /** Simulacao com fisica. */
-    SIM,
-    /** Rodando um log de novo. */
-    REPLAY
-  }
-
-  /** O que o piloto pede ao robo. Um botao (ou combinacao) por request. */
+  /** What the driver asks the robot to do. One button (or combination) per request. */
   public enum RobotRequest {
     IDLE,
     INTAKE,
     EJECT
   }
 
-  /** Estados da maquina de estados geral (a SuperStructure). */
+  /** States of the overall state machine (the SuperStructure). */
   public enum RobotState {
     IDLE,
     INTAKING,

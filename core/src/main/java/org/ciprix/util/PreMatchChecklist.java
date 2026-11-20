@@ -32,6 +32,7 @@ public final class PreMatchChecklist {
   private static final List<Item> items = new ArrayList<>();
   private static final String[] NOTHING = new String[0];
   private static boolean started = false;
+  private static boolean defaultsAdded = false;
   private static boolean ready = false;
   private static String[] pending = NOTHING;
   private static PersistentAlert alert = null;
@@ -57,7 +58,11 @@ public final class PreMatchChecklist {
   }
 
   /** Adds the items every robot needs: charged battery, every device connected, no faults. */
-  public static void addDefaults() {
+  public static synchronized void addDefaults() {
+    if (defaultsAdded) {
+      return;
+    }
+    defaultsAdded = true;
     add(
         String.format(Locale.ROOT, "Battery at %.1f V or more", MIN_BATTERY_VOLTS),
         () -> PowerManager.getVoltage() >= MIN_BATTERY_VOLTS);
@@ -110,6 +115,7 @@ public final class PreMatchChecklist {
   public static synchronized void resetForTesting() {
     items.clear();
     started = false;
+    defaultsAdded = false;
     ready = false;
     pending = NOTHING;
     alert = null;

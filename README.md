@@ -18,20 +18,16 @@ self-test.
 ## Install on a robot
 
 In the WPILib VS Code extension, use **WPILib: Manage Vendor Libraries → Install new library
-(online)** and paste the URLs of the modules the robot uses. `Ciprix.json` is required; the
-others depend on your hardware.
+(online)** and paste the Ciprix vendordep URL:
 
 | Vendordep | URL | Contents |
 | --- | --- | --- |
-| `Ciprix.json` | `https://23daniel3.github.io/Ciprix/Ciprix.json` | FSM, `StateSubsystem`, motor and encoder abstractions, simulation, vision, logging, utilities |
-| `Ciprix-CTRE.json` | `https://23daniel3.github.io/Ciprix/Ciprix-CTRE.json` | TalonFX, TalonFXS, CANcoder, CAN bus diagnostics (Phoenix 6) |
-| `Ciprix-Phoenix5.json` | `https://23daniel3.github.io/Ciprix/Ciprix-Phoenix5.json` | TalonSRX and VictorSPX (Phoenix 5) |
-| `Ciprix-REV.json` | `https://23daniel3.github.io/Ciprix/Ciprix-REV.json` | SPARK MAX, SPARK Flex and REV encoders |
-| `Ciprix-PathPlanner.json` | `https://23daniel3.github.io/Ciprix/Ciprix-PathPlanner.json` | PathPlanner and Choreo integrations |
+| `Ciprix.json` | `https://23daniel3.github.io/Ciprix/Ciprix.json` | FSM, `CiprixRobot`, `StateSubsystem`, motor and encoder abstractions (CTRE Phoenix 6/5, REV, PWM), PathPlanner/Choreo utilities, simulation, vision, logging, power and self-test |
 
-Ciprix requires the **AdvantageKit** and **WPILibNewCommands** vendordeps, and each hardware
-module requires its vendor's own vendordep (Phoenix 6, Phoenix 5, REVLib, PathPlannerLib). VS Code
-warns you if one is missing.
+Ciprix requires the **AdvantageKit** and **WPILibNewCommands** vendordeps, plus the official
+vendordep for whichever hardware or path library your robot actually uses (Phoenix 6, Phoenix 5,
+REVLib, PathPlannerLib). Unused vendor integrations are never loaded at runtime, so you only need
+to install the libraries for the hardware on your robot.
 
 The annotation processor (generates each subsystem's `XxxCommands`) goes in `build.gradle`:
 
@@ -40,8 +36,10 @@ def ciprixJson = new groovy.json.JsonSlurper().parseText(new File(projectDir.get
 annotationProcessor "org.ciprix:ciprix-processor:$ciprixJson.version"
 ```
 
-The fastest way to start is to copy [`templates/skeleton`](./templates/skeleton), which already
-has all of this configured.
+In `Robot.java`, extend `CiprixRobot` instead of `LoggedRobot`—it configures AdvantageKit,
+`CiprixSettings`, `PreMatchChecklist` and the `CommandScheduler` lifecycle automatically. The
+fastest way to start is to copy [`templates/skeleton`](./templates/skeleton), which already has all
+of this configured.
 
 ## The pattern
 
