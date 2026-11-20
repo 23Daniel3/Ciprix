@@ -11,6 +11,7 @@ import edu.wpi.first.hal.HAL;
 import java.util.ArrayList;
 import java.util.List;
 import org.ciprix.TestEnvironment;
+import org.ciprix.interfaces.motor.basic.BasicMotorIO.BasicMotorIOInputs;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
