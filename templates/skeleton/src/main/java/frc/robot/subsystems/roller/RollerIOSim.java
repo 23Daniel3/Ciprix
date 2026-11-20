@@ -5,7 +5,9 @@ import org.ciprix.interfaces.motor.MotorIOSim;
 import org.ciprix.interfaces.motor.advanced.MotorController;
 import org.ciprix.sim.SimMechanism;
 
-/** O roller simulado, com a mesma configuracao e o mesmo nome do robo: ganhos e logs batem. */
+/**
+ * The simulated roller, with the same configuration and name as the robot: gains and logs match.
+ */
 public class RollerIOSim implements RollerIO {
   private final MotorIOSim motor =
       MotorIOSim.talonFX(

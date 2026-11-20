@@ -25,7 +25,7 @@ deploy {
                     // jvmArgs << "-Dcom.sun.management.jmxremote.local.only=false"
                     // jvmArgs << "-Dcom.sun.management.jmxremote.ssl=false"
                     // jvmArgs << "-Dcom.sun.management.jmxremote.authenticate=false"
-                    // jvmArgs << "-Djava.rmi.server.hostname=10.90.47.2"
+                    // jvmArgs << "-Djava.rmi.server.hostname=10.TE.AM.2"
                 }
 
                 frcStaticFileDeploy(getArtifactTypeClass('FileTreeArtifact')) {
@@ -52,7 +52,7 @@ dependencies {
     annotationProcessor wpi.java.deps.wpilibAnnotations()
     implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
-    implementation 'org.apache.commons:commons-math3:3.+' // usado pelos mapas da Ciprix
+    implementation 'org.apache.commons:commons-math3:3.+' // used by the Ciprix maps
 
     roborioDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.roborio)
     roborioDebug wpi.java.vendor.jniDebug(wpi.platforms.roborio)

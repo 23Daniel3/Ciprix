@@ -8,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import edu.wpi.first.math.geometry.Translation2d;
 import org.junit.jupiter.api.Test;
 
-/** Zonas do campo (trincheira, zona de alianca) dependem destes predicados geometricos. */
+/** Field zones (trench, alliance zone) depend on these geometric predicates. */
 class Polygon2dTest {
 
-  // Quadrado unitario (0,0)-(1,1)
+  // Unit square (0,0)-(1,1)
   private final Polygon2d square =
       new Polygon2d(
           new Translation2d(0, 0),
@@ -44,15 +44,15 @@ class Polygon2dTest {
   @Test
   void distanceIsZeroInsideAndEuclideanOutside() {
     assertEquals(0.0, square.distanceTo(new Translation2d(0.5, 0.5)), 1e-9);
-    // ponto a 1.0 a direita da aresta x=1
+    // point 1.0 to the right of the edge x=1
     assertEquals(1.0, square.distanceTo(new Translation2d(2.0, 0.5)), 1e-9);
-    // diagonal a partir do vertice (1,1): sqrt(2)
+    // diagonal from the vertex (1,1): sqrt(2)
     assertEquals(Math.sqrt(2.0), square.distanceTo(new Translation2d(2.0, 2.0)), 1e-9);
   }
 
   @Test
   void worksForConcavePolygons() {
-    // "L": o recorte superior-direito fica FORA
+    // "L": the upper-right cutout is OUTSIDE
     Polygon2d ell =
         new Polygon2d(
             new Translation2d(0, 0),
@@ -63,6 +63,6 @@ class Polygon2dTest {
             new Translation2d(0, 2));
     assertTrue(ell.contains(new Translation2d(0.5, 1.5)));
     assertTrue(ell.contains(new Translation2d(1.5, 0.5)));
-    assertFalse(ell.contains(new Translation2d(1.5, 1.5)), "recorte do L esta fora");
+    assertFalse(ell.contains(new Translation2d(1.5, 1.5)), "the L cutout is outside");
   }
 }

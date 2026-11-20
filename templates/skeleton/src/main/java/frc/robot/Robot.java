@@ -12,28 +12,28 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 /**
- * O robo: configura a Ciprix e o AdvantageKit e roda o agendador de comandos. A estrutura
- * (subsistemas, botoes, autonomo) fica em {@link RobotContainer}.
+ * The robot: sets up Ciprix and AdvantageKit and runs the command scheduler. The structure
+ * (subsystems, buttons, autonomous) lives in {@link RobotContainer}.
  */
 public class Robot extends LoggedRobot {
   private final RobotContainer robotContainer;
   private Command autonomousCommand;
 
   public Robot() {
-    // A Ciprix vem primeiro: tudo o que e criado depois le estas configuracoes.
+    // Ciprix comes first: everything created afterwards reads these settings.
     configureCiprix();
 
     Logger.recordMetadata("ProjectName", "skeleton");
     Logger.recordMetadata("BuildTime", java.time.Instant.now().toString());
     switch (Constants.currentMode) {
       case REAL -> {
-        // No robo: log no pendrive ("/U/logs") e ao vivo no NetworkTables.
+        // On the robot: log to the USB stick ("/U/logs") and live over NetworkTables.
         Logger.addDataReceiver(new WPILOGWriter("/U/logs/"));
         Logger.addDataReceiver(new NT4Publisher());
       }
       case SIM -> Logger.addDataReceiver(new NT4Publisher());
       case REPLAY -> {
-        // Replay: le um log e escreve outro com o sufixo "_sim", o mais rapido possivel.
+        // Replay: reads a log and writes another with the "_sim" suffix, as fast as possible.
         setUseTiming(false);
         String logPath = LogFileUtil.findReplayLog();
         Logger.setReplaySource(new WPILOGReader(logPath));
@@ -45,7 +45,7 @@ public class Robot extends LoggedRobot {
     robotContainer = new RobotContainer();
   }
 
-  /** Entrega as constantes do projeto para a Ciprix (ela nunca le {@link Constants} direto). */
+  /** Hands the project's constants to Ciprix (it never reads {@link Constants} directly). */
   private static void configureCiprix() {
     CiprixSettings.setMode(
         switch (Constants.currentMode) {

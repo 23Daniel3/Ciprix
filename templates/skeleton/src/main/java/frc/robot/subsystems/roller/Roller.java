@@ -8,9 +8,10 @@ import org.ciprix.annotations.AutoCommandFactory;
 import org.ciprix.interfaces.subsystem.StateSubsystem;
 
 /**
- * Um roller (intake simples), o menor subsistema possivel no padrao: cada request leva a um estado
- * e cada estado diz o que o motor faz. O {@code @AutoCommandFactory} gera {@code RollerCommands},
- * com o comando padrao (relay da SuperStructure) e um comando por request para o copiloto.
+ * A roller (simple intake), the smallest possible subsystem in the pattern: each request leads to a
+ * state and each state says what the motor does. {@code @AutoCommandFactory} generates {@code
+ * RollerCommands}, with the default command (the SuperStructure relay) and one command per request
+ * for the co-driver.
  */
 @AutoCommandFactory(requestEnum = RollerRequest.class)
 public class Roller
@@ -32,13 +33,13 @@ public class Roller
     fsm.state(RollerState.EJECTING)
         .onEnter(() -> io.controlMotor().runPercentOutput(RollerConstants.EJECT_OUTPUT));
 
-    // Request -> (estado de entrada, estado goal).
+    // Request -> (entry state, goal state).
     bindRequest(RollerRequest.STOP, RollerState.STOPPED, RollerState.STOPPED);
     bindRequest(RollerRequest.INTAKE, RollerState.INTAKING, RollerState.INTAKING);
     bindRequest(RollerRequest.EJECT, RollerState.EJECTING, RollerState.EJECTING);
     fsm.validateComplete();
 
-    // Autoteste de pit: gira o motor por um instante e confere corrente e velocidade.
+    // Pit self-test: spins the motor briefly and checks current and speed.
     selfTest()
         .motor("Motor", io::controlMotor, () -> inputs.motorInputs)
         .output(0.3)
