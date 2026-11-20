@@ -107,7 +107,9 @@ public class ShotOnTheMoveCalculator {
         robotVelocity.getY() * unitToTarget.getX() - robotVelocity.getX() * unitToTarget.getY();
 
     double lateralDisplacement = tangentialVelocity * timeOfFlight * aimScalar.get();
-    double compensationAngle = Math.atan2(lateralDisplacement, distance);
+    // The ball keeps the robot's sideways velocity, so aim against it: moving left (+tangential)
+    // means aiming to the right of the target.
+    double compensationAngle = -Math.atan2(lateralDisplacement, distance);
 
     double offsetRatio = Math.max(-0.99, Math.min(0.99, config.shooterOffsetMeters() / distance));
     double offsetCorrection = Math.asin(offsetRatio);

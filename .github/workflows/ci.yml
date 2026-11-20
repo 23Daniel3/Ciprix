@@ -1,6 +1,6 @@
-# CI da Ciprix: a biblioteca e o template sao builds Gradle independentes (igual ao que uma
-# equipe abre no VS Code). O template consome a biblioteca pelo codigo-fonte (composite build).
-# Nao precisa de roboRIO: o build desktop do GradleRIO + HAL simulado cobrem os testes.
+# Ciprix CI: the library and the template are independent Gradle builds (just like what a team
+# opens in VS Code). The template consumes the library through its source (composite build).
+# No roboRIO needed: the GradleRIO desktop build + simulated HAL cover the tests.
 name: CI
 
 on:
@@ -22,7 +22,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: Ciprix (biblioteca)
+          - name: Ciprix (library)
             dir: .
           - name: Template skeleton
             dir: templates/skeleton
@@ -39,24 +39,24 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Permissao do wrapper
+      - name: Wrapper permission
         run: chmod +x gradlew
 
-      # Roda antes do build de proposito: o build aplica o Spotless sozinho, entao checar
-      # depois dele nunca falharia.
-      - name: Spotless (formatacao)
+      # Runs before the build on purpose: the build applies Spotless on its own, so checking
+      # after it would never fail.
+      - name: Spotless (formatting)
         run: ./gradlew spotlessCheck
 
-      # 'build' compila main + test e executa os testes JUnit.
-      - name: Build + testes
+      # 'build' compiles main + test and runs the JUnit tests.
+      - name: Build + tests
         run: ./gradlew build --max-workers 2
 
-      # Garante que a publicacao e os vendordeps continuam funcionando em todo PR.
-      - name: Publicacao local (dry run)
+      # Makes sure publishing and the vendordeps keep working on every PR.
+      - name: Local publish (dry run)
         if: matrix.dir == '.'
         run: ./gradlew publish generateVendordeps
 
-      - name: Relatorios de teste
+      - name: Test reports
         if: failure()
         uses: actions/upload-artifact@v4
         with:

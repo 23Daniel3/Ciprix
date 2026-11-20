@@ -13,7 +13,7 @@ import frc.robot.subsystems.roller.RollerIOTalonFX;
 import frc.robot.subsystems.superstructure.SuperStructure;
 import org.ciprix.util.PreMatchChecklist;
 
-/** A estrutura do robo: subsistemas, botoes do piloto e do copiloto, autonomo. */
+/** The robot's structure: subsystems, driver and co-driver buttons, autonomous. */
 public class RobotContainer {
 
   private final Roller roller;
@@ -28,28 +28,28 @@ public class RobotContainer {
             switch (Constants.currentMode) {
               case REAL -> new RollerIOTalonFX();
               case SIM -> new RollerIOSim();
-              case REPLAY -> new RollerIO() {}; // os inputs vem do log
+              case REPLAY -> new RollerIO() {}; // inputs come from the log
             });
     superStructure = new SuperStructure(roller);
 
     configureBindings();
-    PreMatchChecklist.addDefaults(); // bateria, dispositivos conectados, sem falhas
+    PreMatchChecklist.addDefaults(); // battery, devices connected, no faults
   }
 
   private void configureBindings() {
-    // Piloto: escolhe o request do robo; a FSM geral faz o resto.
+    // Driver: picks the robot's request; the overall FSM does the rest.
     superStructure.setDefaultCommand(
         SuperStructureCommands.manageRequests(
             superStructure, pilot.leftBumper(), pilot.rightBumper()));
 
-    // Cada subsistema segue a SuperStructure pelo relay gerado.
+    // Each subsystem follows the SuperStructure through the generated relay.
     roller.setDefaultCommand(RollerCommands.defaultCommand(superStructure, roller));
 
-    // Copiloto: backup manual, so enquanto o botao estiver pressionado.
+    // Co-driver: manual backup, only while the button is held.
     copilot.a().whileTrue(RollerCommands.intake(roller));
     copilot.b().whileTrue(RollerCommands.eject(roller));
 
-    // Autoteste de pit (robo habilitado, mecanismo livre).
+    // Pit self-test (robot enabled, mechanism free to move).
     SmartDashboard.putData("SelfTest/Roller", roller.selfTestCommand());
   }
 
