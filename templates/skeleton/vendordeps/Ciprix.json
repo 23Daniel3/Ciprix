@@ -1,7 +1,7 @@
 {
     "fileName": "Ciprix.json",
     "name": "Ciprix",
-    "version": "2026.2.0",
+    "version": "2026.2.1",
     "frcYear": "2026",
     "uuid": "14266e51-de92-4a56-a425-6bd7e565b7c1",
     "mavenUrls": [
@@ -12,7 +12,7 @@
         {
             "groupId": "org.ciprix",
             "artifactId": "ciprix-core",
-            "version": "2026.2.0"
+            "version": "2026.2.1"
         }
     ],
     "jniDependencies": [],
