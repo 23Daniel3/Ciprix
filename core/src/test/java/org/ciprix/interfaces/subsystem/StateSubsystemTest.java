@@ -11,9 +11,9 @@ import org.littletonrobotics.junction.LogTable;
 import org.littletonrobotics.junction.inputs.LoggableInputs;
 
 /**
- * Testes do padrao Request → State do StateSubsystem: verifica que bindRequest registra as
- * transicoes globais com as exclusoes certas e que atGoal() derivado bate com o mapa declarado. Usa
- * um subsistema fake sem hardware (IO vazio + "sensor" simulado por flag).
+ * Tests of the StateSubsystem Request → State pattern: checks that bindRequest registers the global
+ * transitions with the right exclusions and that the derived atGoal() matches the declared map.
+ * Uses a fake subsystem without hardware (empty IO + a "sensor" simulated by a flag).
  */
 class StateSubsystemTest {
 
@@ -28,7 +28,7 @@ class StateSubsystemTest {
     STOPPED
   }
 
-  /** Inputs minimos: LoggableInputs vazio (nada a logar num fake). */
+  /** Minimal inputs: an empty LoggableInputs (nothing to log in a fake). */
   private static class FakeInputs implements LoggableInputs {
     @Override
     public void toLog(LogTable table) {}
@@ -43,7 +43,7 @@ class StateSubsystemTest {
   }
 
   private static class FakeSubsystem extends StateSubsystem<Req, St, FakeInputs, FakeIO> {
-    boolean spinStopped = false; // sensor simulado
+    boolean spinStopped = false; // simulated sensor
     int stoppingEnters = 0;
     int runningEnters = 0;
 
@@ -62,7 +62,7 @@ class StateSubsystemTest {
       assertTrue(fsm.validateComplete());
     }
 
-    /** Avanca um ciclo da FSM sem passar pelo scheduler/Logger. */
+    /** Advances one FSM cycle without going through the scheduler/Logger. */
     void tick() {
       fsm.update();
     }
@@ -77,7 +77,7 @@ class StateSubsystemTest {
   void initialRequestIsSatisfiedAtBoot() {
     FakeSubsystem s = new FakeSubsystem("Test/Boot");
     assertEquals(St.STOPPED, s.getState());
-    assertTrue(s.atGoal(), "STOP com estado STOPPED deve nascer satisfeito");
+    assertTrue(s.atGoal(), "STOP with state STOPPED must start satisfied");
   }
 
   @Test
@@ -85,7 +85,7 @@ class StateSubsystemTest {
     FakeSubsystem s = new FakeSubsystem("Test/Flow");
 
     s.setRequest(Req.RUN);
-    assertFalse(s.atGoal(), "request mudou, estado ainda nao");
+    assertFalse(s.atGoal(), "request changed, state not yet");
     s.tick();
     assertEquals(St.RUNNING, s.getState());
     assertTrue(s.atGoal());
@@ -93,7 +93,7 @@ class StateSubsystemTest {
     s.setRequest(Req.STOP);
     s.tick();
     assertEquals(St.STOPPING, s.getState());
-    assertFalse(s.atGoal(), "STOPPING e intermediario: goal e STOPPED");
+    assertFalse(s.atGoal(), "STOPPING is intermediate: the goal is STOPPED");
 
     s.spinStopped = true;
     s.tick();
@@ -108,13 +108,13 @@ class StateSubsystemTest {
     s.setRequest(Req.RUN);
     s.tick(); // STOPPED -> RUNNING
     s.setRequest(Req.STOP);
-    // spinStopped continua false: o mecanismo "ainda gira" por varios ciclos
+    // spinStopped stays false: the mechanism "keeps spinning" for several cycles
     s.tick(); // RUNNING -> STOPPING
     s.tick();
     s.tick();
 
     assertEquals(St.STOPPING, s.getState());
-    assertEquals(1, s.stoppingEnters, "a transicao global nao pode re-executar o onEnter");
+    assertEquals(1, s.stoppingEnters, "the global transition must not re-run onEnter");
   }
 
   @Test
@@ -124,10 +124,10 @@ class StateSubsystemTest {
     s.setRequest(Req.RUN);
     s.tick(); // STOPPED -> RUNNING
     s.setRequest(Req.STOP);
-    s.tick(); // RUNNING -> STOPPING (spinStopped=false segura aqui)
+    s.tick(); // RUNNING -> STOPPING (spinStopped=false holds it here)
     assertEquals(St.STOPPING, s.getState());
 
-    s.setRequest(Req.RUN); // piloto muda de ideia no meio do caminho
+    s.setRequest(Req.RUN); // the driver changes their mind halfway
     s.tick();
     assertEquals(St.RUNNING, s.getState());
     assertTrue(s.atGoal());
@@ -135,7 +135,7 @@ class StateSubsystemTest {
   }
 
   // ---------------------------------------------------------------------------------------------
-  // Override transitorio (backup do copiloto)
+  // Transient override (co-driver backup)
   // ---------------------------------------------------------------------------------------------
 
   @Test
@@ -144,25 +144,25 @@ class StateSubsystemTest {
     s.periodic();
     assertEquals(St.STOPPED, s.getState());
 
-    s.override(Req.RUN); // copiloto apertou o botao
+    s.override(Req.RUN); // co-driver pressed the button
     assertTrue(s.isOverrideActive());
     assertEquals(Req.RUN, s.getActiveRequest());
-    assertEquals(Req.STOP, s.getRequest(), "o request da SuperStructure continua guardado");
+    assertEquals(Req.STOP, s.getRequest(), "the SuperStructure request is still stored");
 
     s.periodic();
     assertEquals(St.RUNNING, s.getState());
     assertTrue(s.isOverrideActive());
     assertEquals(Req.RUN, s.getActiveRequest());
 
-    s.override(Req.RUN); // continua segurando
+    s.override(Req.RUN); // still holding
     s.periodic();
     assertEquals(St.RUNNING, s.getState());
-    assertEquals(1, s.runningEnters, "manter o override nao re-executa o onEnter");
+    assertEquals(1, s.runningEnters, "holding the override does not re-run onEnter");
 
-    s.periodic(); // soltou: nenhum override() neste ciclo
+    s.periodic(); // released: no override() this cycle
     assertFalse(s.isOverrideActive());
     assertEquals(Req.STOP, s.getActiveRequest());
-    assertEquals(St.STOPPING, s.getState(), "volta sozinho para o request da SuperStructure");
+    assertEquals(St.STOPPING, s.getState(), "goes back to the SuperStructure request on its own");
   }
 
   @Test
@@ -174,7 +174,8 @@ class StateSubsystemTest {
     s.override(Req.RUN);
     s.periodic();
     assertEquals(St.RUNNING, s.getState());
-    assertFalse(s.atGoal(), "RUNNING atende o override, nao o STOP pedido pela SuperStructure");
+    assertFalse(
+        s.atGoal(), "RUNNING serves the override, not the STOP requested by the SuperStructure");
   }
 
   @Test
@@ -182,14 +183,15 @@ class StateSubsystemTest {
     FakeSubsystem s = new FakeSubsystem("Test/OverrideRelay");
     s.spinStopped = true;
 
-    // O relay continua rodando durante o override: o request muda por baixo sem afetar a FSM.
+    // The relay keeps running during the override: the request changes underneath without
+    // affecting the FSM.
     s.setRequest(Req.RUN);
     s.override(Req.STOP);
     s.periodic();
-    assertEquals(St.STOPPED, s.getState(), "STOPPED ja atende o override STOP");
+    assertEquals(St.STOPPED, s.getState(), "STOPPED already serves the STOP override");
     assertEquals(Req.RUN, s.getRequest());
 
-    s.periodic(); // soltou o botao: passa a valer o RUN que o relay deixou guardado
+    s.periodic(); // button released: the RUN the relay left stored takes effect
     assertEquals(St.RUNNING, s.getState());
     assertTrue(s.atGoal());
   }
@@ -208,7 +210,7 @@ class StateSubsystemTest {
       assertEquals(Req.RUN, s.getRequest());
       assertFalse(s.isOverrideActive());
       assertEquals(1, reports.size());
-      s.periodic(); // nao pode lancar excecao
+      s.periodic(); // must not throw
       assertEquals(St.RUNNING, s.getState());
     } finally {
       org.ciprix.util.Report.resetSink();

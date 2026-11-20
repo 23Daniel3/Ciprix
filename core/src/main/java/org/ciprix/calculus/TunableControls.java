@@ -59,6 +59,7 @@ public class TunableControls {
       this.kA = constants.kA;
       this.kS = constants.kS;
       this.kG = constants.kG;
+      this.profiled = constants.profiled;
       this.maxVel = constants.maxVel;
       this.maxAcc = constants.maxAcc;
       this.isContinuous = constants.isContinuous;
@@ -211,22 +212,27 @@ public class TunableControls {
 
     /** Creates a new {@link PIDController} with the configured constants. */
     public PIDController getPIDController() {
-      PIDController controller = new PIDController(kP, kI, kD);
-      controller.setTolerance(tolerance);
+      PIDController controller = new PIDController(kP, kI, kD, period);
+      controller.setTolerance(tolerance, velTolerance);
       controller.setIntegratorRange(iMin, iMax);
       controller.setIZone(iZone);
-
+      if (isContinuous) {
+        controller.enableContinuousInput(minInput, maxInput);
+      }
       return controller;
     }
 
     /** Creates a new {@link ProfiledPIDController} with the configured constants. */
     public ProfiledPIDController getProfiledPIDController() {
       ProfiledPIDController controller =
-          new ProfiledPIDController(kP, kI, kD, new TrapezoidProfile.Constraints(maxVel, maxAcc));
-      controller.setTolerance(tolerance);
+          new ProfiledPIDController(
+              kP, kI, kD, new TrapezoidProfile.Constraints(maxVel, maxAcc), period);
+      controller.setTolerance(tolerance, velTolerance);
       controller.setIntegratorRange(iMin, iMax);
       controller.setIZone(iZone);
-
+      if (isContinuous) {
+        controller.enableContinuousInput(minInput, maxInput);
+      }
       return controller;
     }
 
@@ -324,11 +330,13 @@ public class TunableControls {
      * @see {@link TunablePIDController} for creating a tunable PID controller.
      */
     public PIDController getPIDController() {
-      PIDController controller = new PIDController(kP.get(), kI.get(), kD.get());
-      controller.setTolerance(tolerance.get());
+      PIDController controller = new PIDController(kP.get(), kI.get(), kD.get(), period);
+      controller.setTolerance(tolerance.get(), velTolerance.get());
       controller.setIntegratorRange(iMin.get(), iMax.get());
       controller.setIZone(iZone.get());
-
+      if (isContinuous) {
+        controller.enableContinuousInput(minInput, maxInput);
+      }
       return controller;
     }
 
@@ -344,11 +352,14 @@ public class TunableControls {
               kP.get(),
               kI.get(),
               kD.get(),
-              new TrapezoidProfile.Constraints(maxVel.get(), maxAcc.get()));
-      controller.setTolerance(tolerance.get());
+              new TrapezoidProfile.Constraints(maxVel.get(), maxAcc.get()),
+              period);
+      controller.setTolerance(tolerance.get(), velTolerance.get());
       controller.setIntegratorRange(iMin.get(), iMax.get());
       controller.setIZone(iZone.get());
-
+      if (isContinuous) {
+        controller.enableContinuousInput(minInput, maxInput);
+      }
       return controller;
     }
 
@@ -401,6 +412,8 @@ public class TunableControls {
       if (tunableParams.isContinuous) {
         pidController.enableContinuousInput(tunableParams.minInput, tunableParams.maxInput);
       }
+      // Apply the integrator zone and range too, not only after the first setSetpoint().
+      updateParams();
     }
 
     /**
@@ -420,7 +433,6 @@ public class TunableControls {
       pidController.setTolerance(params.tolerance.get(), params.velTolerance.get());
       pidController.setIZone(params.iZone.get());
       pidController.setIntegratorRange(params.iMin.get(), params.iMax.get());
-      pidController.setTolerance(params.tolerance.get(), params.velTolerance.get());
     }
 
     /**
@@ -553,6 +565,8 @@ public class TunableControls {
       if (tunableParams.isContinuous) {
         profiledPIDController.enableContinuousInput(tunableParams.minInput, tunableParams.maxInput);
       }
+      // Apply the integrator zone and range too, not only after the first setGoal().
+      updateParams();
     }
 
     /**
