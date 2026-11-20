@@ -28,6 +28,8 @@ jobs:
             dir: templates/skeleton
           - name: Example arm-elevator
             dir: examples/arm-elevator
+          - name: Example rev-and-phoenix5
+            dir: examples/rev-and-phoenix5
     defaults:
       run:
         working-directory: ${{ matrix.dir }}
