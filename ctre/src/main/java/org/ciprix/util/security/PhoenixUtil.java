@@ -1,3 +1,12 @@
+// Copyright (c) 2021-2026 Littleton Robotics
+// http://github.com/Mechanical-Advantage
+//
+// Use of this source code is governed by a BSD
+// license that can be found in the LICENSE file
+// at the root directory of this project.
+// Modified for Ciprix, 2026
+// (The license above is the original project's; see NOTICE.md.)
+
 package org.ciprix.util.security;
 
 import com.ctre.phoenix6.StatusCode;
