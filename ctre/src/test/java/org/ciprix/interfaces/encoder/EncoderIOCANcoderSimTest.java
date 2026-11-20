@@ -24,7 +24,12 @@ class EncoderIOCANcoderSimTest {
 
   private static CANcoderConfiguration readBack(EncoderIOCANcoder encoder) {
     CANcoderConfiguration applied = new CANcoderConfiguration();
-    StatusCode status = encoder.getCANcoder().getConfigurator().refresh(applied, 1.0);
+    // Make sure the simulated device exists, then give it time to answer.
+    encoder.getCANcoder().getSimState();
+    StatusCode status = StatusCode.StatusCodeNotInitialized;
+    for (int i = 0; i < 30 && !status.isOK(); i++) {
+      status = encoder.getCANcoder().getConfigurator().refresh(applied, 0.25);
+    }
     assertTrue(status.isOK(), "refresh: " + status);
     return applied;
   }

@@ -48,7 +48,12 @@ class MotorIOTalonFXSSimTest {
 
   private static TalonFXSConfiguration readBack(MotorIOTalonFXS motor) {
     TalonFXSConfiguration applied = new TalonFXSConfiguration();
-    StatusCode status = motor.getTalon().getConfigurator().refresh(applied, 1.0);
+    // Make sure the simulated device exists, then give it time to answer.
+    motor.getTalon().getSimState();
+    StatusCode status = StatusCode.StatusCodeNotInitialized;
+    for (int i = 0; i < 30 && !status.isOK(); i++) {
+      status = motor.getTalon().getConfigurator().refresh(applied, 0.25);
+    }
     assertTrue(status.isOK(), "refresh: " + status);
     return applied;
   }
