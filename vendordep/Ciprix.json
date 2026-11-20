@@ -13,6 +13,31 @@
             "groupId": "org.ciprix",
             "artifactId": "ciprix-core",
             "version": "${ciprixVersion}"
+        },
+        {
+            "groupId": "org.ciprix",
+            "artifactId": "ciprix-ctre",
+            "version": "${ciprixVersion}"
+        },
+        {
+            "groupId": "org.ciprix",
+            "artifactId": "ciprix-rev",
+            "version": "${ciprixVersion}"
+        },
+        {
+            "groupId": "org.ciprix",
+            "artifactId": "ciprix-phoenix5",
+            "version": "${ciprixVersion}"
+        },
+        {
+            "groupId": "org.ciprix",
+            "artifactId": "ciprix-pathplanner",
+            "version": "${ciprixVersion}"
+        },
+        {
+            "groupId": "org.apache.commons",
+            "artifactId": "commons-math3",
+            "version": "3.6.1"
         }
     ],
     "jniDependencies": [],
