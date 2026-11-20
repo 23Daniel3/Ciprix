@@ -6,18 +6,19 @@ import frc.robot.Constants.RobotRequest;
 import frc.robot.subsystems.superstructure.SuperStructure;
 import java.util.function.BooleanSupplier;
 
-/** Comandos do piloto para a SuperStructure. */
+/** Driver commands for the SuperStructure. */
 public final class SuperStructureCommands {
   private SuperStructureCommands() {}
 
   /**
-   * Comando padrao da SuperStructure: traduz os botoes do piloto no {@link RobotRequest} ativo, a
-   * cada ciclo. E o unico ponto de entrada da intencao do piloto na FSM geral.
+   * The SuperStructure's default command: translates the driver's buttons into the active {@link
+   * RobotRequest}, every cycle. It is the only entry point for the driver's intent into the overall
+   * FSM.
    *
    * <pre>
-   * eject        -> EJECT   (vence os outros botoes)
+   * eject        -> EJECT   (beats the other buttons)
    * intake       -> INTAKE
-   * (nenhum)     -> IDLE
+   * (none)       -> IDLE
    * </pre>
    */
   public static Command manageRequests(

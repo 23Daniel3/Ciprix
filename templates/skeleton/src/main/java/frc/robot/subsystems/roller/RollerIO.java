@@ -6,7 +6,7 @@ import org.ciprix.interfaces.motor.advanced.MotorIO.MotorIOInputs;
 import org.ciprix.interfaces.subsystem.SubsystemIO;
 import org.littletonrobotics.junction.AutoLog;
 
-/** Camada de hardware do roller: o subsistema so fala com o motor por aqui. */
+/** The roller's hardware layer: the subsystem only talks to the motor through here. */
 public interface RollerIO extends SubsystemIO<RollerIOInputsAutoLogged> {
   @AutoLog
   class RollerIOInputs {
