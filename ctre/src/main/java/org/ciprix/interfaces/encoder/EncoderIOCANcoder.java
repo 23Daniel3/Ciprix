@@ -3,6 +3,7 @@ package org.ciprix.interfaces.encoder;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
@@ -22,9 +23,16 @@ public class EncoderIOCANcoder extends EncoderBase {
   private final CANcoder encoder;
 
   public EncoderIOCANcoder(String name, int id, EncoderConfig config) {
+    this(name, id, new CANBus("rio"), config);
+  }
+
+  /**
+   * @param canBus the bus the CANcoder is on (a CANivore, for example)
+   */
+  public EncoderIOCANcoder(String name, int id, CANBus canBus, EncoderConfig config) {
     super(name, config);
 
-    this.encoder = new CANcoder(id);
+    this.encoder = new CANcoder(id, canBus);
 
     CANcoderConfiguration hwConfig = new CANcoderConfiguration();
     hwConfig.MagnetSensor.SensorDirection =
@@ -50,6 +58,11 @@ public class EncoderIOCANcoder extends EncoderBase {
   }
 
   /** CAN id of the CANcoder (used by a Talon that reads it directly as feedback). */
+  /** The underlying CANcoder, for vendor features the library does not wrap. */
+  public CANcoder getCANcoder() {
+    return encoder;
+  }
+
   public int getDeviceId() {
     return encoder.getDeviceID();
   }
