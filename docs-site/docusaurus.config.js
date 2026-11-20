@@ -64,7 +64,7 @@ const config = {
       colorMode: {respectPrefersColorScheme: true},
       navbar: {
         title: 'Ciprix',
-        logo: {alt: 'Ciprix', src: 'img/logo.svg'},
+        logo: {alt: 'Ciprix logo', src: 'img/ciprix-logo-icon.png'},
         items: [
           {type: 'docSidebar', sidebarId: 'guides', position: 'left', label: 'Documentation'},
           {to: '/credits', label: 'Credits', position: 'left'},
