@@ -1,3 +1,7 @@
+---
+sidebar_position: 70
+---
+
 # Tunables and dashboard
 
 Package `org.ciprix.logger`. Values you can change from the dashboard while testing, and choosers

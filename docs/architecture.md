@@ -1,3 +1,7 @@
+---
+sidebar_position: 10
+---
+
 # Architecture
 
 ## The pattern
@@ -54,7 +58,7 @@ depends on the robot or the game, it stays in the robot project.
 ## Creating a subsystem
 
 The step-by-step guide, with a compiling example, is in the
-[skeleton](../templates/skeleton/README.md#adding-a-subsystem).
+[skeleton](https://github.com/23Daniel3/Ciprix/blob/main/templates/skeleton/README.md#adding-a-subsystem).
 
 ## Motors
 

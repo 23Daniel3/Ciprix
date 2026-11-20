@@ -3,6 +3,8 @@
 [![CI](https://github.com/23Daniel3/Ciprix/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/23Daniel3/Ciprix/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/23Daniel3/Ciprix?display_name=tag)](https://github.com/23Daniel3/Ciprix/releases)
 
+**Documentation: https://23daniel3.github.io/Ciprix/docs/**
+
 A Java library for FRC robots, built around **state machines and requests**. It installs like
 any WPILib vendor library (vendordep) and brings a ready-made project pattern for a new team:
 FSM, subsystems with IO, motors for every major vendor, simulation, vision, power management and
@@ -13,7 +15,7 @@ self-test.
 | `core/`, `ctre/`, `phoenix5/`, `rev/`, `pathplanner/`, `processor/` | The library modules, published as `org.ciprix:ciprix-<module>` |
 | [`vendordep/`](./vendordep) | The vendordep files (the version is filled in at publish time) |
 | [`templates/skeleton/`](./templates/skeleton) | The smallest complete robot in the pattern, to copy and start a new robot |
-| [`docs/`](./docs) | Guides on architecture, simulation, vision, hardware, 3D robot, controllers, zones, driving helpers, safety, tunables and migration to 2027 |
+| [`docs/`](./docs) | [Documentation site](https://23daniel3.github.io/Ciprix/docs/) sources: guides on architecture, simulation, vision, hardware, 3D robot, controllers, zones, driving helpers, safety, tunables and migration to 2027 |
 
 ## Install on a robot
 
@@ -63,7 +65,9 @@ of this configured.
 6. The co-driver is the manual backup: the `XxxCommands.<request>(xxx)` commands override a
    subsystem's request while the button is held.
 
-Details in [Architecture](./docs/architecture.md).
+Details in [Architecture](./docs/architecture.md). The guides are also published as a searchable
+site at <https://23daniel3.github.io/Ciprix/docs/>; see [Credits and licenses](./docs/credits.md)
+for AdvantageKit (FRC 6328), WPILib and other projects Ciprix builds on.
 
 ## What Ciprix brings
 
