@@ -26,6 +26,8 @@ jobs:
             dir: .
           - name: Template skeleton
             dir: templates/skeleton
+          - name: Example arm-elevator
+            dir: examples/arm-elevator
     defaults:
       run:
         working-directory: ${{ matrix.dir }}
