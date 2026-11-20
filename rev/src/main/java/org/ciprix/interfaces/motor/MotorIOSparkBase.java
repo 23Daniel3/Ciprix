@@ -263,11 +263,15 @@ public abstract class MotorIOSparkBase extends MotorBase {
   private void writeFeedforward(
       SparkBaseConfig target, ClosedLoopSlot slot, double s, double v, double a, double g) {
     target.closedLoop.feedForward.kS(s, slot).kV(v, slot).kA(a, slot);
+    // Write only the gravity term that applies to the mechanism. Writing the other one (even as
+    // 0.0) makes REVLib warn "kG is overriden by kCos" on every boot. It is safe to leave it out:
+    // the boot configuration uses kResetSafeParameters, so the unused term starts at 0, and the
+    // gravityType never changes at runtime, so later tuning updates never need to clear it.
     if (gravityType == GravityType.ARM) {
       // kCosRatio 1: the positions are already rotations of the mechanism.
-      target.closedLoop.feedForward.kG(0.0, slot).kCos(g, slot).kCosRatio(1.0, slot);
+      target.closedLoop.feedForward.kCos(g, slot).kCosRatio(1.0, slot);
     } else {
-      target.closedLoop.feedForward.kG(g, slot).kCos(0.0, slot);
+      target.closedLoop.feedForward.kG(g, slot);
     }
   }
 
