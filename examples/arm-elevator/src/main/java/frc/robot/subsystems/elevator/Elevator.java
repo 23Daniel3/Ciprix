@@ -34,11 +34,6 @@ public class Elevator
     bindRequest(ElevatorRequest.MID, ElevatorState.MOVING_TO_MID, ElevatorState.AT_MID);
     bindRequest(ElevatorRequest.HIGH, ElevatorState.MOVING_TO_HIGH, ElevatorState.AT_HIGH);
     fsm.validateComplete();
-
-    selfTest()
-        .motor("Motor", io::controlMotor, () -> inputs.motorInputs)
-        .output(0.05)
-        .forSeconds(0.3);
   }
 
   private void trip(ElevatorState moving, ElevatorState arrived, double meters) {

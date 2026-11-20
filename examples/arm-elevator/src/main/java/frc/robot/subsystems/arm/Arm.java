@@ -36,12 +36,6 @@ public class Arm extends StateSubsystem<ArmRequest, ArmState, ArmIOInputsAutoLog
     bindRequest(ArmRequest.INTAKE, ArmState.MOVING_TO_INTAKE, ArmState.AT_INTAKE);
     bindRequest(ArmRequest.SCORE, ArmState.MOVING_TO_SCORE, ArmState.AT_SCORE);
     fsm.validateComplete();
-
-    // Pit self-test: a gentle push, enough to see current. The arm only has a short travel.
-    selfTest()
-        .motor("Motor", io::controlMotor, () -> inputs.motorInputs)
-        .output(0.05)
-        .forSeconds(0.3);
   }
 
   private void trip(ArmState moving, ArmState arrived, double targetRotations) {
