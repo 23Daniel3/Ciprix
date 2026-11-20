@@ -67,7 +67,7 @@ public class AntiTippingAccel {
     public LinearAcceleration accelChangeRate = MetersPerSecondPerSecond.of(2.0);
     public AngularAcceleration angularAccelChangeRate = RadiansPerSecondPerSecond.of(3.0);
 
-    // Parametros fisicos e de loop para evitar hardcode
+    // Physical and loop parameters, to avoid hardcoded values
     public LinearAcceleration gravitySafetyThreshold = MetersPerSecondPerSecond.of(3.0);
     public LinearVelocity nominalRobotSpeed = MetersPerSecond.of(4.5);
     public LinearAcceleration defaultMaxAccel = MetersPerSecondPerSecond.of(5.0);
@@ -75,8 +75,8 @@ public class AntiTippingAccel {
     public double angularRiskScalar = 0.8;
     public Time loopPeriod = Seconds.of(0.02);
 
-    // Filtro para dados ruidosos do acelerometro
-    public double accelFilterAlpha = 0.15; // Valor entre 0 e 1 (menor = mais suave/lento)
+    // Filter for noisy accelerometer data
+    public double accelFilterAlpha = 0.15; // Value between 0 and 1 (lower = smoother/slower)
   }
 
   // =========================================================================
@@ -155,7 +155,7 @@ public class AntiTippingAccel {
       LinearAcceleration measuredAy,
       D drivetrain) {
     // 1. Estimate State (Physics & Filtering)
-    // Passamos os valores medidos para serem filtrados e empacotados
+    // Pass the measured values to be filtered and packed
     var currentState = estimateState(robotRotation, measuredAx, measuredAy);
 
     // 2. Compute Risk (0.0 to 1.0)
