@@ -55,7 +55,13 @@ correction to add to the driver's speeds when the robot is tipping.
 AntiTippingAccel antiTip = new AntiTippingAccel(new AntiTippingAccel.AntiTippingConfig());
 
 Optional<ChassisSpeeds> fix =
-    antiTip.calculate(imu.getRotation3d(), imu.getAccelX(), imu.getAccelY(), drive);
+    antiTip.calculate(
+        imu.getRotation3d(),
+        MetersPerSecondPerSecond.of(imu.getAccelX()), // your IMU's reading, converted to units
+        MetersPerSecondPerSecond.of(imu.getAccelY()),
+        drive);
+// addCorrection is a method of your own drivetrain, not of the library: add the speeds
+// to the driver's request however your drive code does it.
 fix.ifPresent(speeds -> drive.addCorrection(speeds));
 ```
 
