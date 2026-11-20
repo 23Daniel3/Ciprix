@@ -16,7 +16,7 @@ public class TargetAssistModifier implements TranslationModifier {
   public Translation2d apply(DriveContext drivetrain, Translation2d joystick) {
     Translation2d current = drivetrain.getPose().getTranslation();
     Translation2d target = targetSupplier.get();
-    Translation2d vectorToTarget = target.minus(current);
+    Translation2d vectorToTarget = TranslationModifier.fieldToDriver(target.minus(current));
 
     if (vectorToTarget.getNorm() > 0.01)
       vectorToTarget = vectorToTarget.div(vectorToTarget.getNorm());
