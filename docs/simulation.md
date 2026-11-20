@@ -1,3 +1,7 @@
+---
+sidebar_position: 60
+---
+
 # Simulation
 
 Simulation uses the same configuration and motor names as the robot, so state machines, gains,

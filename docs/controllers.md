@@ -1,3 +1,7 @@
+---
+sidebar_position: 30
+---
+
 # Controllers
 
 Package `org.ciprix.controller`. Helpers to read the driver's input and give feedback.

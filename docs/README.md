@@ -1,7 +1,15 @@
+---
+id: index
+slug: /
+sidebar_position: 0
+title: Ciprix documentation
+---
+
 # Documentation
 
 | Guide | What it's for |
 | --- | --- |
+| [Getting started](getting-started.md) | Install `Ciprix.json`, copy the template and extend `CiprixRobot` |
 | [Architecture](architecture.md) | The request/state pattern, what belongs in the library vs. the robot, how to create a subsystem |
 | [Simulation](simulation.md) | Simulated motors with physics, battery, log replay and 3D robot |
 | [Vision](vision.md) | AprilTags with Limelight: the library's ready-made pipeline and how to tighten it for your robot |
@@ -13,3 +21,5 @@
 | [Driving helpers](driving-helpers.md) | `DriveContext`, translation modifiers and rotation strategies |
 | [Safety](safety.md) | Slew rate limiters, stall and spike detectors, anti-tipping, CAN health |
 | [Tunables and dashboard](tunables-and-dashboard.md) | Tunable numbers and autonomous choosers |
+| [Release notes](release-notes.md) | What changed in each version and how to migrate |
+| [Credits and licenses](credits.md) | The GPLv3 license, and the projects Ciprix builds on, such as AdvantageKit (FRC 6328) and WPILib |

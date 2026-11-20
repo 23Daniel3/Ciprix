@@ -1,3 +1,7 @@
+---
+sidebar_position: 40
+---
+
 # Safety
 
 Package `org.ciprix.util.security`. Protections that keep the robot and its mechanisms alive.

@@ -1,0 +1,70 @@
+# Builds the documentation site (docs-site/, which reads the guides in docs/) and publishes it to
+# gh-pages/docs, served at https://23daniel3.github.io/Ciprix/docs/.
+# Only the docs/ folder of gh-pages is touched: the Maven repository (repo/) and the Ciprix*.json
+# vendordeps at the root belong to publish.yml.
+name: Docs
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/**'
+      - 'docs-site/**'
+      - '.github/workflows/docs.yml'
+  workflow_dispatch:
+
+# Same group as publish.yml: both push to gh-pages, so they must never run at the same time.
+concurrency:
+  group: publish-gh-pages
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  docs:
+    name: Build and publish the docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Node 22
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: docs-site/package-lock.json
+
+      - name: Build the site
+        working-directory: docs-site
+        run: |
+          npm ci
+          npm run build
+
+      - name: Checkout gh-pages
+        uses: actions/checkout@v5
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Update gh-pages/docs
+        run: |
+          mkdir -p gh-pages/docs
+          # --delete only inside docs/: nothing else on gh-pages is touched.
+          rsync -a --delete docs-site/build/ gh-pages/docs/
+          touch gh-pages/.nojekyll
+
+      - name: Commit and push
+        working-directory: gh-pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A docs .nojekyll
+          if git diff --cached --quiet; then
+            echo "Nothing changed on gh-pages."
+            exit 0
+          fi
+          git commit -m "Update the docs"
+          git push origin gh-pages
