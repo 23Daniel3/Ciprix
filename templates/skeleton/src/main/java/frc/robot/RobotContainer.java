@@ -11,7 +11,7 @@ import frc.robot.subsystems.roller.RollerIO;
 import frc.robot.subsystems.roller.RollerIOSim;
 import frc.robot.subsystems.roller.RollerIOTalonFX;
 import frc.robot.subsystems.superstructure.SuperStructure;
-import org.ciprix.util.PreMatchChecklist;
+import org.ciprix.CiprixSettings;
 
 /** The robot's structure: subsystems, driver and co-driver buttons, autonomous. */
 public class RobotContainer {
@@ -25,7 +25,7 @@ public class RobotContainer {
   public RobotContainer() {
     roller =
         new Roller(
-            switch (Constants.currentMode) {
+            switch (CiprixSettings.getMode()) {
               case REAL -> new RollerIOTalonFX();
               case SIM -> new RollerIOSim();
               case REPLAY -> new RollerIO() {}; // inputs come from the log
@@ -33,23 +33,22 @@ public class RobotContainer {
     superStructure = new SuperStructure(roller);
 
     configureBindings();
-    PreMatchChecklist.addDefaults(); // battery, devices connected, no faults
   }
 
   private void configureBindings() {
-    // Driver: picks the robot's request; the overall FSM does the rest.
+    // Driver: chooses the robot's request; the overall FSM does the rest.
     superStructure.setDefaultCommand(
         SuperStructureCommands.manageRequests(
             superStructure, pilot.leftBumper(), pilot.rightBumper()));
 
-    // Each subsystem follows the SuperStructure through the generated relay.
+    // Each subsystem follows the SuperStructure through its generated relay.
     roller.setDefaultCommand(RollerCommands.defaultCommand(superStructure, roller));
 
     // Co-driver: manual backup, only while the button is held.
     copilot.a().whileTrue(RollerCommands.intake(roller));
     copilot.b().whileTrue(RollerCommands.eject(roller));
 
-    // Pit self-test (robot enabled, mechanism free to move).
+    // Pit self-test (robot enabled, mechanism free to spin).
     SmartDashboard.putData("SelfTest/Roller", roller.selfTestCommand());
   }
 
