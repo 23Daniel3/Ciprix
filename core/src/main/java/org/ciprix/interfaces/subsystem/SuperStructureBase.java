@@ -77,8 +77,9 @@ public abstract class SuperStructureBase<R extends Enum<R>, S extends Enum<S>>
    * @param initialRequest the robot's request at power-on
    */
   protected SuperStructureBase(String name, Class<S> stateEnum, S initialState, R initialRequest) {
-    Objects.requireNonNull(initialRequest, "initialRequest");
-    setName(name);
+    // Checked before SubsystemBase registers the instance with the scheduler, so a bad call
+    // never leaves a half-built subsystem running.
+    super(checkedName(name, initialRequest));
     this.superStructureName = name;
     this.robotRequest = initialRequest;
     this.generalFsm = new StateMachine<>(name + "/RobotState", stateEnum, initialState);
@@ -96,6 +97,11 @@ public abstract class SuperStructureBase<R extends Enum<R>, S extends Enum<S>>
    *
    * <p>Example: {@code bindRequest(SHOOT, GOING_SHOOT, SHOOTING, SHOOTING_RECOVERY)}.
    */
+  private static String checkedName(String name, Object initialRequest) {
+    Objects.requireNonNull(initialRequest, "initialRequest");
+    return name;
+  }
+
   @SafeVarargs
   protected final void bindRequest(R request, S entryState, S... satisfyingStates) {
     generalFsm.addRequestTransition(

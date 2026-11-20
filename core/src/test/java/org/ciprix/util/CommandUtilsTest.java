@@ -37,6 +37,8 @@ class CommandUtilsTest {
     DriverStation.refreshData();
     CommandScheduler.getInstance().cancelAll();
     CommandScheduler.getInstance().getActiveButtonLoop().clear();
+    // Subsystems left registered by other test classes must not run here.
+    CommandScheduler.getInstance().unregisterAllSubsystems();
   }
 
   @AfterEach

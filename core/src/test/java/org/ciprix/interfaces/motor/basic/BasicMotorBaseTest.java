@@ -132,7 +132,7 @@ class BasicMotorBaseTest {
     motor.runPercentOutput(1.0);
     motor.runPercentOutput(-1.0);
     motor.runPercentOutput(5.0); // clamped to 1 first
-    assertEquals(List.of("P 0.8", "P -0.5"), motor.calls);
+    assertEquals(List.of("P 0.8", "P -0.5", "P 0.8"), motor.calls);
   }
 
   @Test
