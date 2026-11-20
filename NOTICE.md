@@ -9,6 +9,10 @@ the complete texts are reproduced below. All of them allow this reuse inside a G
 
 WPILib-derived code follows the [WPILib license](./WPILib-License.md).
 
+## Author
+
+The Ciprix library and its logo are by **Daniel Cipriani**.
+
 ## Files derived from other projects
 
 | Ciprix file | Original | Author | License of the original | Verification |
