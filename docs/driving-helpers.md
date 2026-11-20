@@ -19,7 +19,10 @@ public class Drive extends SubsystemBase implements DriveContext, DriveAccelerat
 Translation modifiers work in the **driver frame**: the joystick vector normalized to [-1, 1],
 where +X points away from the driver's own alliance wall. It is the same on both alliances, so
 modifiers chain without caring about the color. Convert to field speeds **once**, at the end, with
-`AllianceFlipUtil.apply(drivetrain, vx, vy, omega)`.
+`AllianceFlipUtil.apply(drivetrain, vx, vy, omega)`. That method expects **m/s and rad/s**, not
+the normalized values, so multiply the modifiers' output by `drivetrain.getMaxSpeed()` first
+(and the rotation output of a `RotationStrategy`, which is already in rad/s, goes in as `omega`
+unchanged).
 
 A modifier that computes a direction from field positions (a target, a zone center) must convert
 it first with `TranslationModifier.fieldToDriver(...)`.
@@ -48,6 +51,11 @@ Translation2d input = UtilCalculus.getLinearVelocityFromJoysticks(driver.getLeft
 for (TranslationModifier m : modifiers) {
   input = m.apply(drive, input);
 }
+
+// `rotation` is any RotationStrategy (see below). Normalized [-1, 1] -> m/s, then driver frame -> field-relative speeds.
+double maxSpeed = drive.getMaxSpeed().in(MetersPerSecond);
+ChassisSpeeds speeds = AllianceFlipUtil.apply(
+    drive, input.getX() * maxSpeed, input.getY() * maxSpeed, rotation.calculate(drive));
 ```
 
 ## Rotation strategies

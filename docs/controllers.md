@@ -4,7 +4,7 @@ Package `org.ciprix.controller`. Helpers to read the driver's input and give fee
 
 | Class | What it does |
 | --- | --- |
-| `NaturalXboxController` | A `CommandXboxController` with a deadband and inverted axes, so pushing a stick up or to the right gives a positive value. Also has squared variants for finer control near the center. |
+| `NaturalXboxController` | A `CommandXboxController` with a deadband and inverted axes, so the values follow the robot frame (+X forward, +Y to the left): pushing a stick **up or to the left** gives a positive value, and pushing it down or to the right gives a negative one. The X axes are inverted on purpose. Also has squared variants for finer control near the center. |
 | `ArcadeController` | A generic arcade stick with up to 16 buttons, each exposed as a `Trigger` (`button1()` to `button16()`, or `button(index)`). |
 | `DoublePressTracker` | Turns any `Trigger` into one that fires only on a quick double press. |
 | `VibrateXboxController` | Command factory for rumble patterns. |
@@ -15,7 +15,8 @@ Package `org.ciprix.controller`. Helpers to read the driver's input and give fee
 ```java
 NaturalXboxController driver = new NaturalXboxController(0, 0.08); // port, deadband
 
-double forward = driver.getLeftY();          // up on the stick is positive (inverted for you)
+double forward = driver.getLeftY();          // up is positive (+X forward)
+double left = driver.getLeftX();             // left is positive (+Y left)
 double turn = driver.getSquaredRightX();     // same axis, squared
 ```
 
