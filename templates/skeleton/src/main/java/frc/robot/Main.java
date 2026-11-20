@@ -2,7 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.RobotBase;
 
-/** Ponto de entrada. Nao coloque nada aqui: a inicializacao fica em {@link Robot}. */
+/** Entry point. Don't put anything here: initialization lives in {@link Robot}. */
 public final class Main {
   private Main() {}
 

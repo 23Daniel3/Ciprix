@@ -58,7 +58,7 @@ public class DualZoneSuctionBumpModifier implements TranslationModifier {
         pullVec = pullVec.div(pullVec.getNorm()).times(strength);
       }
 
-      return pullVec;
+      return TranslationModifier.fieldToDriver(pullVec);
     }
 
     private void reset() {

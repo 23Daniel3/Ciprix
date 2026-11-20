@@ -2,6 +2,7 @@ package org.ciprix.util.drivetrain;
 
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import java.util.function.DoubleSupplier;
@@ -79,9 +80,12 @@ public class PIDRotation implements RotationStrategy {
       }
     }
 
-    // Simple PID calculation (Target vs Current)
-    return controller.calculate(
-        drivetrain.getRotation().getRadians(), targetSupplier.get().getRadians());
+    // Simple PID calculation (Target vs Current), limited to what the drivetrain can do.
+    double maxOmega = drivetrain.getMaxAngularSpeed().in(RadiansPerSecond);
+    double output =
+        controller.calculate(
+            drivetrain.getRotation().getRadians(), targetSupplier.get().getRadians());
+    return MathUtil.clamp(output, -maxOmega, maxOmega);
   }
 
   /** Checks if tunable numbers have changed and updates the controller. */

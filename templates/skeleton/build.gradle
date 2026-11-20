@@ -25,7 +25,7 @@ deploy {
                     // jvmArgs << "-Dcom.sun.management.jmxremote.local.only=false"
                     // jvmArgs << "-Dcom.sun.management.jmxremote.ssl=false"
                     // jvmArgs << "-Dcom.sun.management.jmxremote.authenticate=false"
-                    // jvmArgs << "-Djava.rmi.server.hostname=10.90.47.2"
+                    // jvmArgs << "-Djava.rmi.server.hostname=10.TE.AM.2"
                 }
 
                 frcStaticFileDeploy(getArtifactTypeClass('FileTreeArtifact')) {
