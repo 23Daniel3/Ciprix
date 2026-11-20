@@ -7,10 +7,10 @@ import frc.robot.subsystems.roller.RollerConstants.RollerRequest;
 import org.ciprix.interfaces.subsystem.SuperStructureBase;
 
 /**
- * A maquina de estados geral: decide o estado do robo a partir do request do piloto e, ao entrar em
- * cada estado, diz o que cada subsistema deve fazer. Os subsistemas recebem esses requests pelo
- * comando padrao gerado ({@code RollerCommands.defaultCommand(superStructure, roller)}), que le
- * {@link #getRollerRequest()}.
+ * The overall state machine: decides the robot's state from the driver's request and, on entering
+ * each state, says what each subsystem should do. The subsystems receive those requests through the
+ * generated default command ({@code RollerCommands.defaultCommand(superStructure, roller)}), which
+ * reads {@link #getRollerRequest()}.
  */
 public class SuperStructure extends SuperStructureBase<RobotRequest, RobotState> {
 
@@ -25,19 +25,19 @@ public class SuperStructure extends SuperStructureBase<RobotRequest, RobotState>
     generalFsm.state(RobotState.INTAKING).onEnter(() -> rollerRequest = RollerRequest.INTAKE);
     generalFsm.state(RobotState.EJECTING).onEnter(() -> rollerRequest = RollerRequest.EJECT);
 
-    // Request do robo -> estado de entrada (e os estados que ja o atendem).
+    // Robot request -> entry state (and the states that already serve it).
     bindRequest(RobotRequest.IDLE, RobotState.IDLE);
     bindRequest(RobotRequest.INTAKE, RobotState.INTAKING);
     bindRequest(RobotRequest.EJECT, RobotState.EJECTING);
     generalFsm.validateComplete();
   }
 
-  /** Request do roller, lido todo ciclo pelo comando padrao gerado. */
+  /** The roller's request, read every cycle by the generated default command. */
   public RollerRequest getRollerRequest() {
     return rollerRequest;
   }
 
-  /** True quando o roller chegou no estado pedido (use nas transicoes da FSM geral). */
+  /** True when the roller reached the requested state (use it in the overall FSM's transitions). */
   public boolean isRollerAtGoal() {
     return roller.atGoal();
   }

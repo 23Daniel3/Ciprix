@@ -5,7 +5,7 @@ import org.ciprix.interfaces.motor.MotorIOTalonFX;
 import org.ciprix.interfaces.motor.advanced.MotorController;
 import org.ciprix.interfaces.motor.advanced.MotorIO;
 
-/** O roller no robo: um Kraken X60 (Talon FX) no barramento CAN do roboRIO. */
+/** The roller on the robot: a Kraken X60 (Talon FX) on the roboRIO CAN bus. */
 public class RollerIOTalonFX implements RollerIO {
   private final MotorIO motor =
       new MotorIOTalonFX(

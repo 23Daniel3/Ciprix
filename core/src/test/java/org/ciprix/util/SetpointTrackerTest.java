@@ -20,7 +20,7 @@ class SetpointTrackerTest {
     assertTrue(SetpointTracker.atSetpoint(100.0, 2.0, 101.9));
     assertTrue(SetpointTracker.atSetpoint(100.0, 2.0, 102.0), "tolerancia e inclusiva (<=)");
     assertFalse(SetpointTracker.atSetpoint(100.0, 2.0, 102.1));
-    assertTrue(SetpointTracker.atSetpoint(-50.0, 1.0, -50.5), "funciona com valores negativos");
+    assertTrue(SetpointTracker.atSetpoint(-50.0, 1.0, -50.5), "works with negative values");
   }
 
   @Test
