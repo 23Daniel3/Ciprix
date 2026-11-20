@@ -48,7 +48,8 @@ class ContinuousUnwrapperTest {
   void keepsCountingBackwardAcrossTheWrap() {
     ContinuousUnwrapper unwrapper = new ContinuousUnwrapper(4096);
     unwrapper.update(100);
-    assertEquals(-100.0, unwrapper.update(3896), 1e-9);
+    // 100 -> 3996 is a 200-tick step back across zero.
+    assertEquals(-100.0, unwrapper.update(3996), 1e-9);
   }
 
   @Test
