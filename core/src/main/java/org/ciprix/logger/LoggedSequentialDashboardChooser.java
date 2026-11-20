@@ -143,7 +143,7 @@ public class LoggedSequentialDashboardChooser<V> extends PeriodicSystem {
     Logger.processInputs(keyPrefix, inputs);
   }
 
-  /* ---------- novos helpers públicos para coordenação entre choosers ---------- */
+  /* ---------- new public helpers for coordinating between choosers ---------- */
 
   /**
    * Reads the current Dashboard selections into selectedValues[] without changing visible options
