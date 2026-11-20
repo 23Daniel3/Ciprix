@@ -1,3 +1,7 @@
+---
+sidebar_position: 90
+---
+
 # Migrating to WPILib 2027
 
 > Based on the official 2027 changelog, still in **alpha** (Alpha 8, page updated 2026-10-30).

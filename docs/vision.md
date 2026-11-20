@@ -1,3 +1,7 @@
+---
+sidebar_position: 50
+---
+
 # Vision
 
 Vision has two levels: the library's ready-made pipeline, which works for any team, and the

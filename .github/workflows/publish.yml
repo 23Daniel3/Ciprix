@@ -78,6 +78,7 @@ jobs:
               echo "<li><a href=\"$n\">https://23daniel3.github.io/Ciprix/$n</a></li>"
             done
             echo "</ul><p>Maven repository: <code>https://23daniel3.github.io/Ciprix/repo</code></p>"
+            echo "<p><a href=\"docs/\">Docs</a></p>"
           } > gh-pages/index.html
 
       - name: Commit and push
