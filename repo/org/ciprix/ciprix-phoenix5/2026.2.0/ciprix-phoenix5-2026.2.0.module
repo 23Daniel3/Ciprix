@@ -1,0 +1,98 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.ciprix",
+    "module": "ciprix-phoenix5",
+    "version": "2026.2.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.11"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "org.ciprix",
+          "module": "ciprix-core",
+          "version": {
+            "requires": "2026.2.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "ciprix-phoenix5-2026.2.0.jar",
+          "url": "ciprix-phoenix5-2026.2.0.jar",
+          "size": 10103,
+          "sha512": "29426c6ae615c1d4ab045e486a61350dec2d7438156f8c33b9f5ed80bd1d6d9ce5bfc3a78c811810656ffc00b55bfb52747fe40b3d725006a7cac7d2fef23887",
+          "sha256": "ba61d21684d78a917b8176594003e1ac29bbd073b12f5161b01e1e53261015ea",
+          "sha1": "6fc584efed6ab2d98032f7a36581821746def76f",
+          "md5": "c55b655a35576f7d9a9a3edf43be7793"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "org.ciprix",
+          "module": "ciprix-core",
+          "version": {
+            "requires": "2026.2.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "ciprix-phoenix5-2026.2.0.jar",
+          "url": "ciprix-phoenix5-2026.2.0.jar",
+          "size": 10103,
+          "sha512": "29426c6ae615c1d4ab045e486a61350dec2d7438156f8c33b9f5ed80bd1d6d9ce5bfc3a78c811810656ffc00b55bfb52747fe40b3d725006a7cac7d2fef23887",
+          "sha256": "ba61d21684d78a917b8176594003e1ac29bbd073b12f5161b01e1e53261015ea",
+          "sha1": "6fc584efed6ab2d98032f7a36581821746def76f",
+          "md5": "c55b655a35576f7d9a9a3edf43be7793"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "ciprix-phoenix5-2026.2.0-sources.jar",
+          "url": "ciprix-phoenix5-2026.2.0-sources.jar",
+          "size": 5849,
+          "sha512": "5282fd59bf8f806e868f354b0e97b515d0588b83a7ef2a15bfeecaf9fca262c300f6f6d25b6d600ef04084d518ca2e008a6518372fd151fc825cd691828a6798",
+          "sha256": "4b8a30b0d4dcb750e3a2b6dc2c5c280c3a432d06f309df201ae93ab8ba4e32cc",
+          "sha1": "ebd729332da026843b637b216188d594e2dfe810",
+          "md5": "a00a96425248b73045447ace56181732"
+        }
+      ]
+    }
+  ]
+}

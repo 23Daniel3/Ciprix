@@ -1,0 +1,89 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.ciprix",
+    "module": "ciprix-processor",
+    "version": "2026.2.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.11"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "ciprix-processor-2026.2.0.jar",
+          "url": "ciprix-processor-2026.2.0.jar",
+          "size": 7240,
+          "sha512": "2cac44b6adfea1fa3a4db80985a9b42e01423249b39e07cf866d0fa3a7c41da78feb2c34ac9e2c7e8812ca3c1e3c3c47c6620fe3f4eb47184374fd1d2215e700",
+          "sha256": "bc150f96f9d5523d9c92a1589feb538c9c388fcc61670b85cdd8bb81ec7dbfa7",
+          "sha1": "5a9258816e778e9edc1d78b6972dfae7aac5d047",
+          "md5": "b52568172b0653e7a49da725ce01c3c0"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "com.squareup",
+          "module": "javapoet",
+          "version": {
+            "requires": "1.13.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "ciprix-processor-2026.2.0.jar",
+          "url": "ciprix-processor-2026.2.0.jar",
+          "size": 7240,
+          "sha512": "2cac44b6adfea1fa3a4db80985a9b42e01423249b39e07cf866d0fa3a7c41da78feb2c34ac9e2c7e8812ca3c1e3c3c47c6620fe3f4eb47184374fd1d2215e700",
+          "sha256": "bc150f96f9d5523d9c92a1589feb538c9c388fcc61670b85cdd8bb81ec7dbfa7",
+          "sha1": "5a9258816e778e9edc1d78b6972dfae7aac5d047",
+          "md5": "b52568172b0653e7a49da725ce01c3c0"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "ciprix-processor-2026.2.0-sources.jar",
+          "url": "ciprix-processor-2026.2.0-sources.jar",
+          "size": 4111,
+          "sha512": "7da3c6e34daf4e6413522a8c6ad0f3596a1a6b247dd45ec2325307b782f84cb6abb8ea3ac1fc3a8aecd05e737ef35bfdaa50cc13a83947de50371c272e051350",
+          "sha256": "175795a5598171f434bb8a564325e6836a299cf69bab70891655d92bca88d1ee",
+          "sha1": "62f2c665fef8207eb36f568363090de3055d5e7c",
+          "md5": "0446f4c9ab4551ad68e0d015686d28f0"
+        }
+      ]
+    }
+  ]
+}
