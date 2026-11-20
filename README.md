@@ -13,7 +13,7 @@ self-test.
 | `core/`, `ctre/`, `phoenix5/`, `rev/`, `pathplanner/`, `processor/` | The library modules, published as `org.ciprix:ciprix-<module>` |
 | [`vendordep/`](./vendordep) | The vendordep files (the version is filled in at publish time) |
 | [`templates/skeleton/`](./templates/skeleton) | The smallest complete robot in the pattern, to copy and start a new robot |
-| [`docs/`](./docs) | Guides on architecture, simulation, vision, hardware, 3D robot and migration to 2027 |
+| [`docs/`](./docs) | Guides on architecture, simulation, vision, hardware, 3D robot, controllers, zones, driving helpers, safety, tunables and migration to 2027 |
 
 ## Install on a robot
 
