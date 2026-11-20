@@ -30,6 +30,8 @@ jobs:
             dir: examples/arm-elevator
           - name: Example rev-and-phoenix5
             dir: examples/rev-and-phoenix5
+          - name: Example swerve-vision
+            dir: examples/swerve-vision
     defaults:
       run:
         working-directory: ${{ matrix.dir }}
