@@ -30,7 +30,7 @@ Beyond `Ciprix.json`, only install the official vendordep for the hardware or pa
 robot actually uses (Phoenix 6, Phoenix 5, REVLib, PathPlannerLib)—unused vendor integrations are
 never loaded at runtime.
 
-> **Migrating from 2026.2.0:** `Ciprix.json` now bundles every Ciprix module (`ciprix-core`,
+> **Migrating from 2026.2.x:** `Ciprix.json` now bundles every Ciprix module (`ciprix-core`,
 > `ciprix-ctre`, `ciprix-rev`, `ciprix-phoenix5`, `ciprix-pathplanner`) and `commons-math3`. Delete
 > any old `vendordeps/Ciprix-*.json` files (`Ciprix-CTRE.json`, `Ciprix-REV.json`,
 > `Ciprix-Phoenix5.json`, `Ciprix-PathPlanner.json`) when updating `Ciprix.json` so artifacts are
@@ -100,7 +100,7 @@ The version lives in [`gradle.properties`](./gradle.properties) (`ciprixVersion`
 
 1. Update `ciprixVersion` and the version in `templates/skeleton/vendordeps/Ciprix*.json` in the
    same PR.
-2. After merging to `main`, create a release tagged `v<version>` (for example `v2026.2.0`).
+2. After merging to `main`, create a release tagged `v<version>` (for example `v2026.3.0`).
 3. The [`publish.yml`](./.github/workflows/publish.yml) workflow builds, tests and publishes the
    Maven repository to `https://23daniel3.github.io/Ciprix/repo` and the vendordeps to
    `https://23daniel3.github.io/Ciprix/`, on the `gh-pages` branch.
