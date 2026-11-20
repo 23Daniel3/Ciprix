@@ -4,7 +4,7 @@ import static edu.wpi.first.units.Units.Amps;
 
 import org.ciprix.interfaces.motor.advanced.MotorConfig;
 
-/** Constantes do roller: ids, potencias, configuracao do motor, requests e estados. */
+/** Roller constants: ids, power levels, motor configuration, requests and states. */
 public final class RollerConstants {
   private RollerConstants() {}
 
@@ -16,14 +16,14 @@ public final class RollerConstants {
   public static final MotorConfig MOTOR_CONFIG =
       new MotorConfig().currentLimit(Amps.of(40)).coastMode();
 
-  /** O que a SuperStructure (ou o copiloto) pede ao roller. */
+  /** What the SuperStructure (or the co-driver) asks of the roller. */
   public enum RollerRequest {
     STOP,
     INTAKE,
     EJECT
   }
 
-  /** Estados da maquina de estados do roller. */
+  /** States of the roller's state machine. */
   public enum RollerState {
     STOPPED,
     INTAKING,
