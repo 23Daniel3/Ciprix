@@ -9,7 +9,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.*;
 import java.util.Optional;
-import org.ciprix.calculus.ExponentialMovingAverage; // Importação da sua classe utilitária
+import org.ciprix.calculus.ExponentialMovingAverage; // Your utility class import
 import org.ciprix.util.drivetrain.DriveAccelerationLimits;
 import org.ciprix.util.drivetrain.DriveContext;
 import org.littletonrobotics.junction.Logger;
@@ -117,7 +117,7 @@ public class AntiTippingAccel {
 
   public AntiTippingAccel(AntiTippingConfig initialConfig) {
     this.config = initialConfig;
-    // Inicializa filtros com o alpha da config
+    // Initialize filters with the config's alpha
     this.axFilter = new ExponentialMovingAverage(config.accelFilterAlpha);
     this.ayFilter = new ExponentialMovingAverage(config.accelFilterAlpha);
   }
@@ -128,7 +128,7 @@ public class AntiTippingAccel {
    * @param newConfig The new configuration object.
    */
   public void setConfig(AntiTippingConfig newConfig) {
-    // Se o alpha mudou, recria os filtros (opcional, mas recomendado para garantir consistência)
+    // If alpha changed, recreate the filters (optional, but recommended for consistency)
     if (this.config.accelFilterAlpha != newConfig.accelFilterAlpha) {
       this.axFilter = new ExponentialMovingAverage(newConfig.accelFilterAlpha);
       this.ayFilter = new ExponentialMovingAverage(newConfig.accelFilterAlpha);
@@ -250,25 +250,25 @@ public class AntiTippingAccel {
         MathUtil.clamp(
             config.comLateralOffset.in(Meters) / config.characteristicLength.in(Meters), -1, 1);
 
-    // Lógica: Se o componente de velocidade (forwardComponent) estiver alinhado com o viés
+    // Logic: if the velocity component (forwardComponent) is aligned with the bias
     // (fwdBias),
-    // isso é perigoso. Multiplicamos para aumentar o risco.
+    // that's dangerous. We multiply to increase the risk.
     double forwardComponent = (velMag > 1e-3) ? (robotVel.vxMetersPerSecond / velMag) : 0.0;
     double lateralComponent = (velMag > 1e-3) ? (robotVel.vyMetersPerSecond / velMag) : 0.0;
 
-    double frontEffect = 1.0 + (fwdBias * forwardComponent); // Se bias + e vel +, aumenta risco
+    double frontEffect = 1.0 + (fwdBias * forwardComponent); // If bias+ and vel+, risk increases
     double sideEffect = 1.0 + (Math.abs(latBias) * Math.abs(lateralComponent));
 
     double dirFactor = MathUtil.clamp(frontEffect * sideEffect, 0.5, 2.0);
 
-    // Agora o rawRisk usa o dirFactor
+    // Now rawRisk uses dirFactor
     double rawRisk =
         ((config.inclinationWeight * normInclination)
                 + (config.linAccelWeight * normAccel)
                 + (config.speedWeight * normSpeed * alignFactor * config.alignmentWeight))
             * dirFactor;
 
-    // Usando config.riskSensitivity ao invés de hardcode 2.0
+    // Using config.riskSensitivity instead of a hardcoded 2.0
     return MathUtil.clamp(rawRisk / config.riskSensitivity, 0.0, 1.0);
   }
 
