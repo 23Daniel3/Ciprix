@@ -93,7 +93,7 @@ const config = {
           },
         ],
         copyright:
-          'Ciprix is licensed under GPLv3 · Built with Docusaurus · Documentation style inspired by AdvantageKit (FRC 6328)',
+          'Ciprix is licensed under GPLv3 · Author: Daniel Cipriani · Built with Docusaurus · Documentation style inspired by AdvantageKit (FRC 6328)',
       },
       prism: {
         theme: prismThemes.github,

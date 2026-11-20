@@ -133,3 +133,5 @@ Ciprix stands on other teams' and projects' work, and credits them:
 - **PathPlanner** (Michael Jansen): the AdvantageKit pathfinding example.
 
 Each derived file, its original and its license are listed in [`NOTICE.md`](./NOTICE.md).
+
+**Author:** Daniel Cipriani, who wrote the Ciprix library and designed its logo.
