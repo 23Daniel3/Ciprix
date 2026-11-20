@@ -115,6 +115,10 @@ public class AntiTippingAccel {
   private double lastAppliedMaxAccMpss = Double.NaN;
   private double lastAppliedMaxAngAccRadpss = Double.NaN;
 
+  // The drivetrain's own limits, read on the first cycle (see applyLimits).
+  private double nominalMaxAccMpss = Double.NaN;
+  private double nominalMaxAngAccRadpss = Double.NaN;
+
   public AntiTippingAccel(AntiTippingConfig initialConfig) {
     this.config = initialConfig;
     // Inicializa filtros com o alpha da config
@@ -205,7 +209,9 @@ public class AntiTippingAccel {
     double incMagDeg = Math.hypot(pitch.in(Degrees), roll.in(Degrees));
     boolean tipping = incMagDeg > config.tippingThreshold.in(Degrees);
 
-    Rotation2d tiltDir = new Rotation2d(Math.atan2(roll.in(Radians), pitch.in(Radians)));
+    // Direction the robot is falling toward, in the robot frame (0 = front, CCW positive).
+    // Positive pitch puts the front down (+X); positive roll puts the right side down (-Y).
+    Rotation2d tiltDir = new Rotation2d(Math.atan2(-roll.in(Radians), pitch.in(Radians)));
 
     return new InternalPhysicsState(pitch, roll, tiltDir, incMagDeg, tipping, ax, ay);
   }
@@ -289,26 +295,21 @@ public class AntiTippingAccel {
     // to "catch" the fall
     // or drives the chassis UNDER the COG.
     // If tilting forward (+Pitch), we drive forward (+X).
-    Translation2d recoverVec =
-        new Translation2d(0.0, 1.0).rotateBy(state.tiltDirection).times(speedMps);
-
-    // Note: This coordinate transform assumes Field-Centric or Robot-Centric consistency.
-    // Ideally, anti-tip is robot-relative.
-    return new ChassisSpeeds(recoverVec.getX(), -recoverVec.getY(), 0.0);
+    // The correction is robot-relative: drive toward the low side.
+    Translation2d recoverVec = new Translation2d(speedMps, state.tiltDirection);
+    return new ChassisSpeeds(recoverVec.getX(), recoverVec.getY(), 0.0);
   }
 
   /** Step 4: Applies dynamic limits to the drivetrain. */
   private void applyLimits(double risk, DriveAccelerationLimits drivetrain) {
     if (!config.dynamicAccelerationEnabled || config.reactiveOnlyMode) return;
 
-    double nominalMaxAcc = config.defaultMaxAccel.in(MetersPerSecondPerSecond);
-    // Ideally: double nominalMaxAcc = drivetrain.getConfig().maxLinearAccel;
-    // Since we don't have access to Drivetrain config structure here, we assume:
-    try {
-      nominalMaxAcc = drivetrain.getMaxAcceleration().in(MetersPerSecondPerSecond);
-    } catch (Exception e) {
-      /* Fallback uses config value */
+    // The drivetrain's own limits are read once: after the first cycle they hold the value this
+    // class wrote, and reading them again would compound the reduction and never recover.
+    if (Double.isNaN(nominalMaxAccMpss)) {
+      nominalMaxAccMpss = readOrDefault(drivetrain::getMaxAcceleration, config.defaultMaxAccel);
     }
+    double nominalMaxAcc = nominalMaxAccMpss;
 
     double scale = MathUtil.clamp(1.0 - risk, config.minAccelFraction, 1.0);
     double targetMaxAcc = nominalMaxAcc * scale;
@@ -327,11 +328,18 @@ public class AntiTippingAccel {
     lastAppliedMaxAccMpss = nextAcc;
 
     // Repeat for Angular
-    double nominalMaxAngAcc = config.defaultMaxAngularAccel.in(RadiansPerSecondPerSecond);
-    try {
-      nominalMaxAngAcc = drivetrain.getMaxAngularAcceleration().in(RadiansPerSecondPerSecond);
-    } catch (Exception e) {
+    if (Double.isNaN(nominalMaxAngAccRadpss)) {
+      AngularAcceleration measured = null;
+      try {
+        measured = drivetrain.getMaxAngularAcceleration();
+      } catch (RuntimeException e) {
+        // Fall back to the configured default below.
+      }
+      nominalMaxAngAccRadpss =
+          (measured != null ? measured : config.defaultMaxAngularAccel)
+              .in(RadiansPerSecondPerSecond);
     }
+    double nominalMaxAngAcc = nominalMaxAngAccRadpss;
 
     // Using config.angularRiskScalar instead of hardcoded 0.8
     double scaleAng =
@@ -351,6 +359,17 @@ public class AntiTippingAccel {
 
     drivetrain.setMaxAngularAcceleration(RadiansPerSecondPerSecond.of(nextAngAcc));
     lastAppliedMaxAngAccRadpss = nextAngAcc;
+  }
+
+  private static double readOrDefault(
+      java.util.function.Supplier<LinearAcceleration> source, LinearAcceleration fallback) {
+    LinearAcceleration measured = null;
+    try {
+      measured = source.get();
+    } catch (RuntimeException e) {
+      // Fall back to the configured default below.
+    }
+    return (measured != null ? measured : fallback).in(MetersPerSecondPerSecond);
   }
 
   private void logState() {
@@ -376,10 +395,23 @@ public class AntiTippingAccel {
       LinearAcceleration estimatedAx,
       LinearAcceleration estimatedAy) {}
 
-  /** Reset estimator history (call ever on enable) DO NOT FORGET DUMP DANIEL. */
+  /**
+   * Clears the filter history and the smoothing of the limits. Call it every time the robot is
+   * enabled. The drivetrain's nominal limits read on the first cycle are kept, so the next cycle
+   * starts again from full acceleration.
+   */
   public void reset() {
     if (axFilter != null) axFilter.reset();
     if (ayFilter != null) ayFilter.reset();
     lastAppliedMaxAccMpss = Double.NaN;
+    lastAppliedMaxAngAccRadpss = Double.NaN;
+  }
+
+  /**
+   * @return the state computed by the last {@link #calculate} call, or {@code null} before the
+   *     first call
+   */
+  public AntiTippingState getLastState() {
+    return lastState;
   }
 }
