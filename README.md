@@ -18,20 +18,23 @@ self-test.
 ## Install on a robot
 
 In the WPILib VS Code extension, use **WPILib: Manage Vendor Libraries → Install new library
-(online)** and paste the URLs of the modules the robot uses. `Ciprix.json` is required; the
-others depend on your hardware.
+(online)** and install **`Ciprix.json`**:
 
 | Vendordep | URL | Contents |
 | --- | --- | --- |
-| `Ciprix.json` | `https://23daniel3.github.io/Ciprix/Ciprix.json` | FSM, `StateSubsystem`, motor and encoder abstractions, simulation, vision, logging, utilities |
-| `Ciprix-CTRE.json` | `https://23daniel3.github.io/Ciprix/Ciprix-CTRE.json` | TalonFX, TalonFXS, CANcoder, CAN bus diagnostics (Phoenix 6) |
-| `Ciprix-Phoenix5.json` | `https://23daniel3.github.io/Ciprix/Ciprix-Phoenix5.json` | TalonSRX and VictorSPX (Phoenix 5) |
-| `Ciprix-REV.json` | `https://23daniel3.github.io/Ciprix/Ciprix-REV.json` | SPARK MAX, SPARK Flex and REV encoders |
-| `Ciprix-PathPlanner.json` | `https://23daniel3.github.io/Ciprix/Ciprix-PathPlanner.json` | PathPlanner and Choreo integrations |
+| `Ciprix.json` | `https://23daniel3.github.io/Ciprix/Ciprix.json` | FSM, `CiprixRobot`, `StateSubsystem`, motor and encoder abstractions (CTRE Phoenix 6/5, REV, PWM), PathPlanner/Choreo utilities, simulation, vision, logging, power and self-test |
 
-Ciprix requires the **AdvantageKit** and **WPILibNewCommands** vendordeps, and each hardware
-module requires its vendor's own vendordep (Phoenix 6, Phoenix 5, REVLib, PathPlannerLib). VS Code
-warns you if one is missing.
+Because `Ciprix.json` declares **AdvantageKit** and **WPILibNewCommands** in its `"requires"` block,
+VS Code automatically offers to install AdvantageKit for you if it is not already in the project.
+Beyond `Ciprix.json`, only install the official vendordep for the hardware or path library your
+robot actually uses (Phoenix 6, Phoenix 5, REVLib, PathPlannerLib)—unused vendor integrations are
+never loaded at runtime.
+
+> **Migrating from 2026.2.0:** `Ciprix.json` now bundles every Ciprix module (`ciprix-core`,
+> `ciprix-ctre`, `ciprix-rev`, `ciprix-phoenix5`, `ciprix-pathplanner`) and `commons-math3`. Delete
+> any old `vendordeps/Ciprix-*.json` files (`Ciprix-CTRE.json`, `Ciprix-REV.json`,
+> `Ciprix-Phoenix5.json`, `Ciprix-PathPlanner.json`) when updating `Ciprix.json` so artifacts are
+> not duplicated on the classpath.
 
 The annotation processor (generates each subsystem's `XxxCommands`) goes in `build.gradle`:
 
@@ -40,8 +43,10 @@ def ciprixJson = new groovy.json.JsonSlurper().parseText(new File(projectDir.get
 annotationProcessor "org.ciprix:ciprix-processor:$ciprixJson.version"
 ```
 
-The fastest way to start is to copy [`templates/skeleton`](./templates/skeleton), which already
-has all of this configured.
+In `Robot.java`, extend `CiprixRobot` instead of `LoggedRobot`—it configures AdvantageKit,
+`CiprixSettings`, `PreMatchChecklist` and the `CommandScheduler` lifecycle automatically. The
+fastest way to start is to copy [`templates/skeleton`](./templates/skeleton), which already has all
+of this configured.
 
 ## The pattern
 

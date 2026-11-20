@@ -92,9 +92,11 @@ public final class TestEnvironment {
     PowerManager.setVoltageSource(() -> batteryVolts);
     RobotVisualizer.resetForTesting();
     PreMatchChecklist.resetForTesting();
+    CiprixRobot.setLoggerStarterForTesting(() -> {});
   }
 
   public void uninstall() {
+    CiprixRobot.resetLoggerStarterForTesting();
     RobotLoop.clearForTesting();
     RobotLoop.setAutoStart(true);
     HardwareHealthMonitor.resetForTesting();

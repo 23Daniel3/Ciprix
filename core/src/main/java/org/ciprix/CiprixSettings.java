@@ -7,15 +7,21 @@ import edu.wpi.first.wpilibj.RobotBase;
  * Robot-wide settings consumed by the Ciprix library.
  *
  * <p>The library never reads constants from robot code. Everything that used to come from {@code
- * frc.robot.Constants} is configured here, once, at the very top of the {@code Robot} constructor
- * (before {@code RobotContainer} is created):
+ * frc.robot.Constants} is configured through {@link CiprixRobot} (in its constructor arguments and
+ * {@link CiprixRobot#configure()}), before {@code RobotContainer} is created:
  *
  * <pre>{@code
- * public Robot() {
- *   CiprixSettings.setMode(Constants.currentMode);
- *   CiprixSettings.setTuningMode(Constants.tuningMode);
- *   CiprixSettings.setFieldSize(FieldConstants.fieldLength, FieldConstants.fieldWidth);
- *   ...
+ * public class Robot extends CiprixRobot {
+ *   public Robot() {
+ *     super(Constants.simMode, Constants.tuningMode);
+ *     ...
+ *   }
+ *
+ *   @Override
+ *   protected void configure() {
+ *     CiprixSettings.setControllerDeadband(Constants.CONTROLLER_DEADBAND);
+ *     CiprixSettings.setFieldSize(Constants.FIELD_LENGTH_METERS, Constants.FIELD_WIDTH_METERS);
+ *   }
  * }
  * }</pre>
  *
