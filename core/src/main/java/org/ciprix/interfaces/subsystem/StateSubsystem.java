@@ -18,19 +18,20 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.inputs.LoggableInputs;
 
 /**
- * Subsistema baseado no padrao Request → State: o mundo externo expressa intencao via um enum de
- * Request ({@link #setRequest}); a FSM interna decide como chegar la; {@link #atGoal()} indica se o
- * request atual foi atendido.
+ * Subsystem built on the Request → State pattern: the outside world expresses intent through a
+ * Request enum ({@link #setRequest}); the internal FSM decides how to get there; {@link #atGoal()}
+ * says whether the current request has been served.
  *
- * <p>Use {@link #bindRequest} para declarar, de uma vez: (a) por qual estado a FSM entra para
- * atender um request; (b) qual estado final o satisfaz; (c) quais estados intermediarios nao devem
- * ser interrompidos pela transicao global. Com isso, {@code atGoal()} e derivado automaticamente —
- * nao e mais necessario sobrescrever com um switch manual.
+ * <p>Use {@link #bindRequest} to declare, in one call: (a) which state the FSM enters to serve a
+ * request; (b) which final state satisfies it; (c) which intermediate states must not be
+ * interrupted by the global transition. With that, {@code atGoal()} is derived automatically, so
+ * there is no need to override it with a manual switch.
  *
- * <p><b>Backup do copiloto:</b> {@link #override} sobrepoe o request por um unico ciclo. Enquanto o
- * copiloto segura o botao, o subsistema segue o override; o request da SuperStructure continua
- * guardado e volta a valer sozinho no ciclo seguinte ao soltar. {@code atGoal()} continua relativo
- * ao request da SuperStructure, entao a FSM geral nunca avanca por causa de um override.
+ * <p><b>Co-driver backup:</b> {@link #override} replaces the request for a single cycle. While the
+ * co-driver holds the button, the subsystem follows the override; the SuperStructure's request is
+ * kept and takes over again on its own the cycle after the button is released. {@code atGoal()}
+ * stays relative to the SuperStructure's request, so the overall FSM never advances because of an
+ * override.
  */
 public abstract class StateSubsystem<
         R extends Enum<R>, S extends Enum<S>, I extends LoggableInputs, T extends SubsystemIO<I>>
@@ -40,19 +41,21 @@ public abstract class StateSubsystem<
   protected final I inputs;
   protected final T io;
 
-  /** Request de quem comanda o subsistema normalmente (a SuperStructure, pelo relay). */
+  /** Request from whoever normally commands the subsystem (the SuperStructure, via the relay). */
   protected R currentRequest;
 
-  /** Override transitorio do copiloto: vale por um ciclo e e limpo no fim do {@code periodic()}. */
+  /**
+   * Transient co-driver override: lasts one cycle and is cleared at the end of {@code periodic()}.
+   */
   private R transientOverrideRequest = null;
 
   private R lastOverrideRequest = null;
   private boolean overrideActive = false;
 
-  /** Mapa request → estado que o satisfaz, preenchido por {@link #bindRequest}. */
+  /** Map from request to the state that satisfies it, filled by {@link #bindRequest}. */
   private final Map<R, S> requestGoals;
 
-  // Nome e chaves de log calculados uma vez: o loop nao concatena strings.
+  // Name and log keys computed once: the loop doesn't concatenate strings.
   private final String subsystemName;
   private final String requestKey;
   private final String activeRequestKey;
@@ -65,11 +68,11 @@ public abstract class StateSubsystem<
   private boolean faultAlertActive = false;
   private boolean nullRequestReported = false;
 
-  // Autoteste de pit: declarado com selfTest(), executado por selfTestCommand().
+  // Pit self-test: declared with selfTest(), run by selfTestCommand().
   private SelfTest selfTest = null;
   private boolean selfTestRunning = false;
 
-  // Status em texto: so e remontado quando algo muda.
+  // Text status: only rebuilt when something changes.
   private String status = "";
   private String statusDetail = "";
   private R statusRequest;
@@ -107,7 +110,7 @@ public abstract class StateSubsystem<
     this.atGoalKey = name + "/atGoal";
     this.faultKey = name + "/fault";
     this.statusKey = name + "/status";
-    this.faultAlert = new Alert(name + ": falha na maquina de estados", AlertType.kWarning);
+    this.faultAlert = new Alert(name + ": state machine fault", AlertType.kWarning);
 
     if (constantsClass != null) {
       ConstantsLogger.logConstants(constantsClass, name);
@@ -115,34 +118,34 @@ public abstract class StateSubsystem<
   }
 
   /**
-   * Declara como um request e atendido pela FSM.
+   * Declares how a request is served by the FSM.
    *
-   * <p>Registra uma transicao global para {@code entryState} sempre que {@code request} estiver
-   * ativo e a FSM nao estiver no {@code entryState}, no {@code goalState} nem em nenhum dos {@code
-   * intermediateStates}. Tambem registra {@code goalState} como o estado que faz {@link #atGoal()}
-   * retornar true para esse request.
+   * <p>Registers a global transition to {@code entryState} whenever {@code request} is active and
+   * the FSM is not in {@code entryState}, {@code goalState} or any of the {@code
+   * intermediateStates}. Also registers {@code goalState} as the state that makes {@link #atGoal()}
+   * return true for that request.
    *
-   * <p>Exemplo (Shooter): {@code bindRequest(SHOOT, FLYWHEEL_RAMPING, SHOOTING, KICKER_RAMPING)} —
-   * request SHOOT entra por FLYWHEEL_RAMPING, e satisfeito em SHOOTING, e KICKER_RAMPING nao deve
-   * ser interrompido.
+   * <p>Example (Shooter): {@code bindRequest(SHOOT, FLYWHEEL_RAMPING, SHOOTING, KICKER_RAMPING)}:
+   * the SHOOT request enters through FLYWHEEL_RAMPING, is satisfied in SHOOTING, and KICKER_RAMPING
+   * must not be interrupted.
    *
-   * @param request o request a mapear
-   * @param entryState estado de entrada para atender o request
-   * @param goalState estado que satisfaz o request ({@code atGoal() == true})
-   * @param intermediateStates estados intermediarios que ja estao "a caminho" do goal
+   * @param request the request to map
+   * @param entryState entry state to serve the request
+   * @param goalState state that satisfies the request ({@code atGoal() == true})
+   * @param intermediateStates intermediate states already "on the way" to the goal
    */
   @SafeVarargs
   protected final void bindRequest(R request, S entryState, S goalState, S... intermediateStates) {
     requestGoals.put(request, goalState);
 
-    // goalState + intermediarios; o proprio entryState e excluido pela FSM automaticamente.
+    // goalState + intermediates; the entryState itself is excluded by the FSM automatically.
     final S[] satisfied = Arrays.copyOf(intermediateStates, intermediateStates.length + 1);
     satisfied[intermediateStates.length] = goalState;
 
     fsm.addRequestTransition(request.name(), () -> isRequest(request), entryState, satisfied);
   }
 
-  /** Define o request do subsistema. E o que o relay da SuperStructure chama todo ciclo. */
+  /** Sets the subsystem's request. This is what the SuperStructure relay calls every cycle. */
   public void setRequest(R request) {
     if (request == null) {
       reportNullRequest("setRequest");
@@ -152,9 +155,9 @@ public abstract class StateSubsystem<
   }
 
   /**
-   * Backup do copiloto: sobrepoe o request por <b>um ciclo</b>. Chame todo ciclo enquanto o botao
-   * estiver pressionado (os comandos gerados por {@code @AutoCommandFactory} ja fazem isso). Ao
-   * parar de chamar, o subsistema volta sozinho para o request da SuperStructure.
+   * Co-driver backup: replaces the request for <b>one cycle</b>. Call it every cycle while the
+   * button is held (the commands generated by {@code @AutoCommandFactory} already do this). Once
+   * you stop calling it, the subsystem goes back to the SuperStructure's request on its own.
    */
   public void override(R request) {
     if (request == null) {
@@ -164,18 +167,18 @@ public abstract class StateSubsystem<
     this.transientOverrideRequest = request;
   }
 
-  /** Request de quem comanda o subsistema normalmente (sem considerar o override do copiloto). */
+  /** Request from whoever normally commands the subsystem (ignoring the co-driver override). */
   public R getRequest() {
     return currentRequest;
   }
 
-  /** Request que a FSM esta seguindo de fato: o override do copiloto, se houver, ou o normal. */
+  /** Request the FSM is actually following: the co-driver override, if any, or the normal one. */
   public R getActiveRequest() {
     if (transientOverrideRequest != null) return transientOverrideRequest;
     return overrideActive ? lastOverrideRequest : currentRequest;
   }
 
-  /** True enquanto o copiloto estiver sobrepondo o request deste subsistema. */
+  /** True while the co-driver is overriding this subsystem's request. */
   public boolean isOverrideActive() {
     return overrideActive || transientOverrideRequest != null;
   }
@@ -188,12 +191,12 @@ public abstract class StateSubsystem<
     return inputs;
   }
 
-  /** A FSM do subsistema, para telemetria, testes e visualizadores. */
+  /** The subsystem's FSM, for telemetry, tests and visualizers. */
   public StateMachine<S> getStateMachine() {
     return fsm;
   }
 
-  /** True quando o request que a FSM esta seguindo (considerando o override) e {@code request}. */
+  /** True when the request the FSM is following (including the override) is {@code request}. */
   protected boolean isRequest(R request) {
     return (transientOverrideRequest != null ? transientOverrideRequest : currentRequest)
         == request;
@@ -204,7 +207,7 @@ public abstract class StateSubsystem<
   }
 
   /**
-   * Trigger que fica ativo enquanto o subsistema estiver em um dos estados. Exemplo: {@code
+   * Trigger active while the subsystem is in one of the states. Example: {@code
    * shooter.inState(ShooterState.SHOOTING).onTrue(LedCommands.blink(led))}.
    */
   @SafeVarargs
@@ -212,33 +215,33 @@ public abstract class StateSubsystem<
     return new Trigger(fsm.inState(state, others));
   }
 
-  /** Trigger que fica ativo enquanto o request da SuperStructure estiver atendido. */
+  /** Trigger active while the SuperStructure's request is served. */
   public Trigger atGoalTrigger() {
     return new Trigger(this::atGoal);
   }
 
   /**
-   * True quando a FSM esta em uma rota de falha: um estado estourou o {@code timeoutAfter} ou uma
-   * condicao de seguranca disparou, e o request que falhou ainda esta bloqueado.
+   * True when the FSM is on a failure path: a state exceeded its {@code timeoutAfter} or a safety
+   * condition fired, and the request that failed is still blocked.
    */
   public boolean hasFault() {
     return fsm.hasFault();
   }
 
-  /** Libera de novo o request bloqueado por uma falha, sem esperar ele ser solto. */
+  /** Releases the request blocked by a failure again, without waiting for it to be released. */
   public void clearFault() {
     fsm.clearFault();
   }
 
   /**
-   * Texto curto com o que o subsistema esta fazendo, por exemplo {@code "SHOOT | KICKER_RAMPING"}.
-   * Publicado em {@code <nome>/status}.
+   * Short text describing what the subsystem is doing, for example {@code "SHOOT |
+   * KICKER_RAMPING"}. Published at {@code <name>/status}.
    */
   public String getStatus() {
     return status;
   }
 
-  /** Acrescenta um detalhe do proprio subsistema ao status (ex.: "3120 rpm"). Vazio remove. */
+  /** Appends a subsystem-specific detail to the status (e.g. "3120 rpm"). Empty removes it. */
   protected void setStatusDetail(String detail) {
     String value = detail == null ? "" : detail;
     if (!value.equals(statusDetail)) {
@@ -254,11 +257,11 @@ public abstract class StateSubsystem<
     io.updateInputs(inputs);
     Logger.processInputs(subsystemName, inputs);
 
-    // O override pedido depois do ultimo ciclo vale durante este periodic() inteiro.
+    // An override requested after the last cycle applies for this entire periodic().
     overrideActive = transientOverrideRequest != null;
     lastOverrideRequest = transientOverrideRequest;
 
-    // Durante o autoteste a FSM fica pausada: nada briga com o teste pelos motores.
+    // During the self-test the FSM is paused: nothing fights the test for the motors.
     if (!selfTestRunning) {
       fsm.update();
     }
@@ -278,8 +281,8 @@ public abstract class StateSubsystem<
     updateFaultAlert(fault);
     updateStatus(activeRequest, atGoal, fault);
 
-    // Fim do ciclo: o override e transitorio. Se o copiloto continuar segurando o botao, o
-    // comando chama override() de novo antes do proximo periodic().
+    // End of cycle: the override is transient. If the co-driver keeps holding the button, the
+    // command calls override() again before the next periodic().
     transientOverrideRequest = null;
 
     PeriodicTimer.stop(subsystemName);
@@ -288,8 +291,8 @@ public abstract class StateSubsystem<
   protected void sPeriodic() {}
 
   /**
-   * Declara os motores verificados pelo autoteste de pit ({@link #selfTestCommand()}). Chame no
-   * construtor, junto com a FSM:
+   * Declares the motors checked by the pit self-test ({@link #selfTestCommand()}). Call it in the
+   * constructor, alongside the FSM:
    *
    * <pre>{@code
    * selfTest()
@@ -307,12 +310,12 @@ public abstract class StateSubsystem<
   }
 
   /**
-   * Autoteste de pit: gira cada motor declarado em {@link #selfTest()} por um instante e confere se
-   * ele responde, se a corrente faz sentido e se o mecanismo girou. Enquanto roda, a FSM fica
-   * pausada; ao terminar ela recomeca do estado inicial, como depois do boot. Os resultados vao
-   * para {@code SelfTest/<subsistema>/...} e uma falha gera um alerta no dashboard.
+   * Pit self-test: spins each motor declared in {@link #selfTest()} briefly and checks that it
+   * responds, that the current makes sense and that the mechanism turned. While it runs, the FSM is
+   * paused; when it ends, the FSM restarts from its initial state, as after boot. Results go to
+   * {@code SelfTest/<subsystem>/...} and a failure raises a dashboard alert.
    *
-   * <p>Um subsistema sem motores declarados devolve um comando que nao faz nada.
+   * <p>A subsystem with no declared motors returns a command that does nothing.
    */
   public Command selfTestCommand() {
     if (selfTest == null || selfTest.isEmpty()) {
@@ -328,24 +331,24 @@ public abstract class StateSubsystem<
         });
   }
 
-  /** O autoteste declarado, com os resultados da ultima execucao. */
+  /** The declared self-test, with the results of the last run. */
   public SelfTest getSelfTest() {
     return selfTest();
   }
 
-  /** True enquanto o autoteste estiver rodando (a FSM fica pausada). */
+  /** True while the self-test is running (the FSM is paused). */
   public boolean isSelfTestRunning() {
     return selfTestRunning;
   }
 
   /**
-   * Retorna true se o request atual foi atendido. A implementacao padrao usa o mapa construido por
-   * {@link #bindRequest}: o request e considerado atendido quando a FSM esta no {@code goalState}
-   * vinculado a ele. Requests sem vinculo retornam true (sem intencao = satisfeito). Sobrescreva
-   * apenas se o subsistema precisar de uma nocao de goal que nao seja "estar em um estado".
+   * Returns true if the current request has been served. The default implementation uses the map
+   * built by {@link #bindRequest}: the request counts as served when the FSM is in the {@code
+   * goalState} bound to it. Unbound requests return true (no intent = satisfied). Override only if
+   * the subsystem needs a notion of goal other than "being in a state".
    *
-   * <p>O goal e sempre o do request normal ({@link #getRequest()}), nunca o do override do
-   * copiloto.
+   * <p>The goal is always the normal request's ({@link #getRequest()}), never the co-driver
+   * override's.
    */
   public boolean atGoal() {
     S goal = requestGoals.get(currentRequest);
@@ -390,7 +393,6 @@ public abstract class StateSubsystem<
   private void reportNullRequest(String method) {
     if (nullRequestReported) return;
     nullRequestReported = true;
-    Report.error(
-        subsystemName + ": " + method + "(null) ignorado. Um request nunca pode ser null.");
+    Report.error(subsystemName + ": " + method + "(null) ignored. A request can never be null.");
   }
 }

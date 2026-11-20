@@ -18,7 +18,7 @@ public class ZoneRepulsionModifier implements TranslationModifier {
     if (!zone.contains(robotLoc)) return input;
 
     Translation2d center = zone.getCenter();
-    Translation2d repulsion = robotLoc.minus(center);
+    Translation2d repulsion = TranslationModifier.fieldToDriver(robotLoc.minus(center));
     if (repulsion.getNorm() > 1e-6) repulsion = repulsion.div(repulsion.getNorm()).times(strength);
 
     Translation2d finalVec = input.plus(repulsion);

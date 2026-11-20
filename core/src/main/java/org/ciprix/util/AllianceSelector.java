@@ -52,13 +52,17 @@ public class AllianceSelector {
     return getResolvedAlliance() == Alliance.Red;
   }
 
-  /** Shortcut to check if the robot is on the Red alliance. */
+  /**
+   * Shortcut to check if the robot is on the Red alliance (same source as {@link #shouldFlip()}).
+   */
   public boolean isRed() {
-    return getAlliance() == Alliance.Red;
+    return getResolvedAlliance() == Alliance.Red;
   }
 
-  /** Shortcut to check if the robot is on the Blue alliance. */
+  /**
+   * Shortcut to check if the robot is on the Blue alliance (same source as {@link #shouldFlip()}).
+   */
   public boolean isBlue() {
-    return getAlliance() == Alliance.Blue;
+    return getResolvedAlliance() == Alliance.Blue;
   }
 }
