@@ -89,7 +89,7 @@ class MotorIOSparkSimTest {
   @Test
   void sparkMaxReceivesTheConfiguration() {
     MotorIOSparkMax motor = new MotorIOSparkMax("SimMax" + nextId, nextId++, armConfig());
-    assertConfigured(motor.motor);
+    assertConfigured((SparkMax) motor.motor);
     assertTrue(reports.isEmpty(), reports.toString());
   }
 
