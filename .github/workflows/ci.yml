@@ -1,0 +1,67 @@
+# CI da Ciprix: a biblioteca e o template sao builds Gradle independentes (igual ao que uma
+# equipe abre no VS Code). O template consome a biblioteca pelo codigo-fonte (composite build).
+# Nao precisa de roboRIO: o build desktop do GradleRIO + HAL simulado cobrem os testes.
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Ciprix (biblioteca)
+            dir: .
+          - name: Template skeleton
+            dir: templates/skeleton
+    defaults:
+      run:
+        working-directory: ${{ matrix.dir }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: JDK 17 (Temurin)
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Permissao do wrapper
+        run: chmod +x gradlew
+
+      # Roda antes do build de proposito: o build aplica o Spotless sozinho, entao checar
+      # depois dele nunca falharia.
+      - name: Spotless (formatacao)
+        run: ./gradlew spotlessCheck
+
+      # 'build' compila main + test e executa os testes JUnit.
+      - name: Build + testes
+        run: ./gradlew build --max-workers 2
+
+      # Garante que a publicacao e os vendordeps continuam funcionando em todo PR.
+      - name: Publicacao local (dry run)
+        if: matrix.dir == '.'
+        run: ./gradlew publish generateVendordeps
+
+      - name: Relatorios de teste
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-${{ strategy.job-index }}
+          path: |
+            ${{ matrix.dir }}/**/build/reports/tests/
+            ${{ matrix.dir }}/**/build/test-results/
+          if-no-files-found: ignore
