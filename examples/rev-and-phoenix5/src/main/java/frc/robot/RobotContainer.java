@@ -47,7 +47,7 @@ public class RobotContainer {
     flywheel.setDefaultCommand(FlywheelCommands.defaultCommand(superStructure, flywheel));
 
     // Co-driver: spin the flywheel while the button is held, whatever the SuperStructure says.
-    copilot.a().whileTrue(FlywheelCommands.spinUp(flywheel));
+    copilot.a().whileTrue(FlywheelCommands.spin_up(flywheel));
 
     SmartDashboard.putData("SelfTest/Flywheel", flywheel.selfTestCommand());
   }

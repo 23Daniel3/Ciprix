@@ -69,7 +69,7 @@ public class RobotContainer {
 
     // Co-driver backup while held.
     copilot.a().whileTrue(IntakeCommands.intake(intake));
-    copilot.b().whileTrue(ShooterCommands.spinUp(shooter));
+    copilot.b().whileTrue(ShooterCommands.spin_up(shooter));
 
     // The pit self-test: robot enabled, mechanisms free to spin.
     SmartDashboard.putData("SelfTest/Intake", intake.selfTestCommand());
