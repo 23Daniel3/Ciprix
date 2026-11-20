@@ -1,45 +1,46 @@
-# Esqueleto de robô (Ciprix)
+# Robot skeleton (Ciprix)
 
-O menor robô completo no padrão do framework: um subsistema (`Roller`), a `SuperStructure` com a
-máquina de estados geral, os comandos do piloto e o backup do copiloto. Use como ponto de partida
-de um robô novo.
+The smallest complete robot in the framework's pattern: one subsystem (`Roller`), the
+`SuperStructure` with the overall state machine, the driver commands and the co-driver backup.
+Use it as the starting point for a new robot.
 
 ```
 src/main/java/frc/robot/
-  Robot.java                     AdvantageKit + configuração da Ciprix
-  RobotContainer.java            subsistemas, botões, autônomo
-  Constants.java                 modo, RobotRequest, RobotState, campo
-  commands/SuperStructureCommands.java   botões do piloto -> RobotRequest
-  subsystems/superstructure/SuperStructure.java   FSM geral
-  subsystems/roller/             um subsistema: Constants, IO, IOTalonFX, IOSim, Roller
+  Robot.java                     AdvantageKit + Ciprix setup
+  RobotContainer.java            subsystems, buttons, autonomous
+  Constants.java                 mode, RobotRequest, RobotState, field
+  commands/SuperStructureCommands.java   driver buttons -> RobotRequest
+  subsystems/superstructure/SuperStructure.java   overall FSM
+  subsystems/roller/             one subsystem: Constants, IO, IOTalonFX, IOSim, Roller
 ```
 
-## Começar um robô novo
+## Starting a new robot
 
-1. Copie esta pasta para fora do repositório da Ciprix (ou baixe-a pelo GitHub).
-2. Em `.wpilib/wpilib_preferences.json`, troque `teamNumber` pelo número da equipe.
-3. Em `settings.gradle`, troque `rootProject.name`.
-4. Abra a pasta no VS Code da WPILib. `Simulate Robot Code` já funciona: o roller simulado gira
-   com o bumper esquerdo do piloto (controle 0) e inverte com o direito.
+1. Copy this folder outside the Ciprix repository (or download it from GitHub).
+2. In `.wpilib/wpilib_preferences.json`, change `teamNumber` to your team's number.
+3. In `settings.gradle`, change `rootProject.name`.
+4. Open the folder in the WPILib VS Code extension. `Simulate Robot Code` already works: the
+   simulated roller spins with the driver's left bumper (controller 0) and reverses with the
+   right one.
 
-Fora do repositório da Ciprix não existe o código da biblioteca dois níveis acima, então o Gradle baixa a versão
-publicada indicada em `vendordeps/Ciprix*.json`.
+Outside the Ciprix repository, the library's source two levels up doesn't exist, so Gradle
+downloads the published version listed in `vendordeps/Ciprix*.json`.
 
-## Adicionar um subsistema
+## Adding a subsystem
 
-Siga o `Roller` como modelo, sempre nesta ordem:
+Follow `Roller` as a model, always in this order:
 
-1. `XxxConstants`: ids, configurações de motor (`MotorConfig`), `enum XxxRequest` e
+1. `XxxConstants`: ids, motor configurations (`MotorConfig`), `enum XxxRequest` and
    `enum XxxState`.
-2. `XxxIO`: os inputs com `@AutoLog` e um `controlYyy()` por motor, devolvendo
-   `MotorControllerNone` por padrão (é o que roda no replay).
-3. `XxxIOTalonFX` (ou `XxxIOSparkMax`, ...) e `XxxIOSim`, com a mesma configuração e o mesmo nome
-   de motor, para os logs da simulação e do robô baterem.
-4. `Xxx extends StateSubsystem<...>` com `@AutoCommandFactory`: um `fsm.state(...)` por estado,
-   um `bindRequest(...)` por request e `fsm.validateComplete()` no fim.
-5. Na `SuperStructure`: um campo `xxxRequest`, o getter `getXxxRequest()` (o comando gerado lê
-   esse nome) e o request de cada estado geral no `onEnter`.
-6. No `RobotContainer`: `xxx.setDefaultCommand(XxxCommands.defaultCommand(superStructure, xxx))`
-   e, para o copiloto, `XxxCommands.<request>(xxx)` nos botões de backup.
+2. `XxxIO`: the inputs with `@AutoLog` and one `controlYyy()` per motor, returning
+   `MotorControllerNone` by default (that's what runs in replay).
+3. `XxxIOTalonFX` (or `XxxIOSparkMax`, ...) and `XxxIOSim`, with the same configuration and the
+   same motor name, so the simulation and robot logs line up.
+4. `Xxx extends StateSubsystem<...>` with `@AutoCommandFactory`: one `fsm.state(...)` per state,
+   one `bindRequest(...)` per request, and `fsm.validateComplete()` at the end.
+5. In `SuperStructure`: an `xxxRequest` field, the `getXxxRequest()` getter (the generated
+   command reads this name), and each overall state's request in its `onEnter`.
+6. In `RobotContainer`: `xxx.setDefaultCommand(XxxCommands.defaultCommand(superStructure, xxx))`
+   and, for the co-driver, `XxxCommands.<request>(xxx)` on the backup buttons.
 
-O guia completo do padrão está em [`docs/arquitetura.md`](../../docs/arquitetura.md).
+The full guide to the pattern is in [`docs/architecture.md`](../../docs/architecture.md).

@@ -3,102 +3,105 @@
 [![CI](https://github.com/23Daniel3/Ciprix/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/23Daniel3/Ciprix/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/23Daniel3/Ciprix?display_name=tag)](https://github.com/23Daniel3/Ciprix/releases)
 
-Biblioteca para robôs FRC em Java, baseada em **máquinas de estado e requests**. É instalada
-como qualquer biblioteca de fornecedor da WPILib (vendordep) e traz o padrão de projeto pronto
-para uma equipe nova: FSM, subsistemas com IO, motores de todos os fornecedores, simulação,
-visão, energia e autoteste.
+A Java library for FRC robots, built around **state machines and requests**. It installs like
+any WPILib vendor library (vendordep) and brings a ready-made project pattern for a new team:
+FSM, subsystems with IO, motors for every major vendor, simulation, vision, power management and
+self-test.
 
-| Pasta | O que é |
+| Folder | What it is |
 | --- | --- |
-| `core/`, `ctre/`, `phoenix5/`, `rev/`, `pathplanner/`, `processor/` | Os módulos da biblioteca, publicados como `org.ciprix:ciprix-<módulo>` |
-| [`vendordep/`](./vendordep) | Os arquivos de vendordep (a versão é preenchida na publicação) |
-| [`templates/skeleton/`](./templates/skeleton) | O menor robô completo no padrão, para copiar e começar um robô novo |
-| [`docs/`](./docs) | Guias de arquitetura, simulação, visão, hardware, robô 3D e migração para 2027 |
+| `core/`, `ctre/`, `phoenix5/`, `rev/`, `pathplanner/`, `processor/` | The library modules, published as `org.ciprix:ciprix-<module>` |
+| [`vendordep/`](./vendordep) | The vendordep files (the version is filled in at publish time) |
+| [`templates/skeleton/`](./templates/skeleton) | The smallest complete robot in the pattern, to copy and start a new robot |
+| [`docs/`](./docs) | Guides on architecture, simulation, vision, hardware, 3D robot and migration to 2027 |
 
-## Instalar em um robô
+## Install on a robot
 
-No VS Code da WPILib, use **WPILib: Manage Vendor Libraries → Install new library (online)** e
-cole as URLs dos módulos que o robô usa. O `Ciprix.json` é obrigatório; os outros dependem do
-hardware.
+In the WPILib VS Code extension, use **WPILib: Manage Vendor Libraries → Install new library
+(online)** and paste the URLs of the modules the robot uses. `Ciprix.json` is required; the
+others depend on your hardware.
 
-| Vendordep | URL | Conteúdo |
+| Vendordep | URL | Contents |
 | --- | --- | --- |
-| `Ciprix.json` | `https://23daniel3.github.io/Ciprix/Ciprix.json` | FSM, `StateSubsystem`, abstrações de motor e encoder, simulação, visão, logging, utilitários |
-| `Ciprix-CTRE.json` | `https://23daniel3.github.io/Ciprix/Ciprix-CTRE.json` | TalonFX, TalonFXS, CANcoder, diagnóstico do CAN (Phoenix 6) |
-| `Ciprix-Phoenix5.json` | `https://23daniel3.github.io/Ciprix/Ciprix-Phoenix5.json` | TalonSRX e VictorSPX (Phoenix 5) |
-| `Ciprix-REV.json` | `https://23daniel3.github.io/Ciprix/Ciprix-REV.json` | SPARK MAX, SPARK Flex e encoders REV |
-| `Ciprix-PathPlanner.json` | `https://23daniel3.github.io/Ciprix/Ciprix-PathPlanner.json` | Integrações com PathPlanner e Choreo |
+| `Ciprix.json` | `https://23daniel3.github.io/Ciprix/Ciprix.json` | FSM, `StateSubsystem`, motor and encoder abstractions, simulation, vision, logging, utilities |
+| `Ciprix-CTRE.json` | `https://23daniel3.github.io/Ciprix/Ciprix-CTRE.json` | TalonFX, TalonFXS, CANcoder, CAN bus diagnostics (Phoenix 6) |
+| `Ciprix-Phoenix5.json` | `https://23daniel3.github.io/Ciprix/Ciprix-Phoenix5.json` | TalonSRX and VictorSPX (Phoenix 5) |
+| `Ciprix-REV.json` | `https://23daniel3.github.io/Ciprix/Ciprix-REV.json` | SPARK MAX, SPARK Flex and REV encoders |
+| `Ciprix-PathPlanner.json` | `https://23daniel3.github.io/Ciprix/Ciprix-PathPlanner.json` | PathPlanner and Choreo integrations |
 
-A Ciprix exige os vendordeps do **AdvantageKit** e do **WPILibNewCommands**, e cada módulo de
-hardware exige o vendordep do fornecedor (Phoenix 6, Phoenix 5, REVLib, PathPlannerLib). O VS Code
-avisa se faltar algum.
+Ciprix requires the **AdvantageKit** and **WPILibNewCommands** vendordeps, and each hardware
+module requires its vendor's own vendordep (Phoenix 6, Phoenix 5, REVLib, PathPlannerLib). VS Code
+warns you if one is missing.
 
-O processador de anotações (gera os `XxxCommands` de cada subsistema) entra no `build.gradle`:
+The annotation processor (generates each subsystem's `XxxCommands`) goes in `build.gradle`:
 
 ```groovy
 def ciprixJson = new groovy.json.JsonSlurper().parseText(new File(projectDir.getAbsolutePath() + "/vendordeps/Ciprix.json").text)
 annotationProcessor "org.ciprix:ciprix-processor:$ciprixJson.version"
 ```
 
-O jeito mais rápido de começar é copiar o [`templates/skeleton`](./templates/skeleton), que já
-vem com tudo isso configurado.
+The fastest way to start is to copy [`templates/skeleton`](./templates/skeleton), which already
+has all of this configured.
 
-## O padrão
+## The pattern
 
-1. O piloto fala com `SuperStructureCommands.manageRequests(...)`, que escreve um `RobotRequest`.
-2. A máquina de estados geral da `SuperStructure` decide o estado do robô.
-3. No `onEnter` de cada estado geral, a `SuperStructure` define o request de cada subsistema.
-4. Cada subsistema é um `StateSubsystem<Request, State, Inputs, IO>` com a sua própria máquina
-   de estados declarativa (`StateMachine` + `bindRequest(...)`), e só fala com o hardware pela
-   camada IO.
-5. O comando padrão de cada subsistema é o **relay** gerado por `@AutoCommandFactory`
-   (`XxxCommands.defaultCommand(superStructure, xxx)`), que entrega o request da `SuperStructure`.
-6. O copiloto é o backup manual: os comandos `XxxCommands.<request>(xxx)` sobrepõem o request
-   de um subsistema enquanto o botão está pressionado.
+1. The driver talks to `SuperStructureCommands.manageRequests(...)`, which writes a
+   `RobotRequest`.
+2. The `SuperStructure`'s overall state machine decides the robot's state.
+3. In each overall state's `onEnter`, the `SuperStructure` sets each subsystem's request.
+4. Each subsystem is a `StateSubsystem<Request, State, Inputs, IO>` with its own declarative
+   state machine (`StateMachine` + `bindRequest(...)`), and only talks to hardware through the
+   IO layer.
+5. Each subsystem's default command is the **relay** generated by `@AutoCommandFactory`
+   (`XxxCommands.defaultCommand(superStructure, xxx)`), which forwards the `SuperStructure`'s
+   request.
+6. The co-driver is the manual backup: the `XxxCommands.<request>(xxx)` commands override a
+   subsystem's request while the button is held.
 
-Detalhes em [Arquitetura](./docs/arquitetura.md).
+Details in [Architecture](./docs/architecture.md).
 
-## O que a Ciprix traz
+## What Ciprix brings
 
-| Recurso | Guia |
+| Feature | Guide |
 | --- | --- |
-| Máquinas de estado com transições temporizadas, estados de segurança e override do copiloto | [Arquitetura](./docs/arquitetura.md) |
-| Motores que guardam a intenção do código, com un-jam e saúde (Talon FX/FXS, SPARK, SRX/SPX, PWM) | [Arquitetura](./docs/arquitetura.md#motores) |
-| Simulação com física e bateria usando a mesma configuração do robô | [Simulação](./docs/simulacao.md) |
-| Robô 3D no AdvantageScope com o CAD da equipe | [Robô 3D](./docs/robo-3d.md) |
-| Visão por AprilTags pronta (Limelight), com filtros que dizem por que cada pose ficou de fora | [Visão](./docs/visao.md) |
-| Alertas de hardware, gerenciamento de bateria, autoteste no pit e checklist da fila | [Hardware, energia e pit](./docs/hardware-energia-e-pit.md) |
+| State machines with timed transitions, safe states and co-driver override | [Architecture](./docs/architecture.md) |
+| Motors that remember the code's intent, with un-jam and health tracking (Talon FX/FXS, SPARK, SRX/SPX, PWM) | [Architecture](./docs/architecture.md#motors) |
+| Simulation with physics and battery, using the same configuration as the robot | [Simulation](./docs/simulation.md) |
+| 3D robot in AdvantageScope with the team's CAD | [3D Robot](./docs/3d-robot.md) |
+| Ready-made AprilTag vision (Limelight), with filters that say why each pose was rejected | [Vision](./docs/vision.md) |
+| Hardware alerts, battery management, pit self-test and queue checklist | [Hardware, power and pit](./docs/hardware-power-and-pit.md) |
 
-## Desenvolver a biblioteca
+## Developing the library
 
 ```bash
-# Formatação, build e testes de todos os módulos
+# Formatting, build and tests for every module
 ./gradlew build
 
-# Template consumindo a biblioteca pelo código-fonte (composite build)
+# Template consuming the library through its source (composite build)
 cd templates/skeleton && ./gradlew build
 
-# Repositório Maven e vendordeps locais (saem em build/repos/releases e build/vendordeps)
+# Local Maven repository and vendordeps (written to build/repos/releases and build/vendordeps)
 ./gradlew publish generateVendordeps
 ```
 
-Dentro deste repositório, o `settings.gradle` do template faz `includeBuild('../..')`, então o
-Gradle troca os artefatos publicados pelo código-fonte local. Um projeto copiado para fora baixa
-a versão publicada indicada nos vendordeps.
+Inside this repository, the template's `settings.gradle` runs `includeBuild('../..')`, so Gradle
+swaps the published artifacts for the local source. A project copied outside the repository
+downloads the published version listed in the vendordeps instead.
 
-## Publicar uma versão
+## Publishing a version
 
-A versão fica em [`gradle.properties`](./gradle.properties) (`ciprixVersion`, no formato
-`<temporada>.<minor>.<patch>`).
+The version lives in [`gradle.properties`](./gradle.properties) (`ciprixVersion`, formatted as
+`<season>.<minor>.<patch>`).
 
-1. Atualize `ciprixVersion` e a versão em `templates/skeleton/vendordeps/Ciprix*.json` no mesmo PR.
-2. Depois do merge na `main`, crie uma release com a tag `v<versão>` (por exemplo `v2026.2.0`).
-3. O workflow [`publish.yml`](./.github/workflows/publish.yml) compila, testa e publica o
-   repositório Maven em `https://23daniel3.github.io/Ciprix/repo` e os vendordeps em
-   `https://23daniel3.github.io/Ciprix/`, na branch `gh-pages`.
+1. Update `ciprixVersion` and the version in `templates/skeleton/vendordeps/Ciprix*.json` in the
+   same PR.
+2. After merging to `main`, create a release tagged `v<version>` (for example `v2026.2.0`).
+3. The [`publish.yml`](./.github/workflows/publish.yml) workflow builds, tests and publishes the
+   Maven repository to `https://23daniel3.github.io/Ciprix/repo` and the vendordeps to
+   `https://23daniel3.github.io/Ciprix/`, on the `gh-pages` branch.
 
-O workflow recusa a publicação se a tag não bater com `ciprixVersion`.
+The workflow refuses to publish if the tag doesn't match `ciprixVersion`.
 
-## Licença
+## License
 
-O código derivado dos templates da WPILib segue a [licença da WPILib](./WPILib-License.md).
+Code derived from the WPILib templates follows the [WPILib license](./WPILib-License.md).

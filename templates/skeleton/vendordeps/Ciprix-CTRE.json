@@ -1,7 +1,7 @@
 {
     "fileName": "Ciprix-CTRE.json",
     "name": "Ciprix-CTRE",
-    "version": "2026.2.0",
+    "version": "2026.2.1",
     "frcYear": "2026",
     "uuid": "5535d301-9f4e-49a0-a5ed-d6f95081849c",
     "mavenUrls": [
@@ -12,7 +12,7 @@
         {
             "groupId": "org.ciprix",
             "artifactId": "ciprix-ctre",
-            "version": "2026.2.0"
+            "version": "2026.2.1"
         }
     ],
     "jniDependencies": [],
