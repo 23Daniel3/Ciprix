@@ -96,7 +96,7 @@ class MotorIOSparkSimTest {
   @Test
   void sparkFlexReceivesTheConfiguration() {
     MotorIOSparkFlex motor = new MotorIOSparkFlex("SimFlex" + nextId, nextId++, armConfig());
-    assertConfigured(motor.motor);
+    assertConfigured((SparkFlex) motor.motor);
     assertTrue(reports.isEmpty(), reports.toString());
   }
 
