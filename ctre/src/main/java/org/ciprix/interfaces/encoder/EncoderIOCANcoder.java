@@ -4,10 +4,12 @@ import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.units.measure.Angle;
+import org.ciprix.util.Report;
 
 /**
  * {@link org.ciprix.interfaces.encoder.EncoderIO} for a CTRE CANcoder (Phoenix 6).
@@ -19,6 +21,11 @@ import edu.wpi.first.units.measure.Angle;
  * MagnetOffset}) so there's exactly one place it's applied.
  */
 public class EncoderIOCANcoder extends EncoderBase {
+
+  /** Time allowed to the boot configuration, per attempt (same as the Phoenix 6 Talons). */
+  static final double BOOT_TIMEOUT_SECONDS = 0.25;
+
+  static final int BOOT_ATTEMPTS = 5;
 
   private final CANcoder encoder;
 
@@ -41,7 +48,23 @@ public class EncoderIOCANcoder extends EncoderBase {
             : SensorDirectionValue.CounterClockwise_Positive;
     hwConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5; // signed [-0.5, 0.5)
 
-    encoder.getConfigurator().apply(hwConfig);
+    // A CANcoder that is still booting can miss the first write. Without the retry it would keep
+    // its saved direction, and an inverted encoder would silently read backwards.
+    StatusCode status = StatusCode.OK;
+    for (int attempt = 0; attempt < BOOT_ATTEMPTS; attempt++) {
+      status = encoder.getConfigurator().apply(hwConfig, BOOT_TIMEOUT_SECONDS);
+      if (status.isOK()) {
+        return;
+      }
+    }
+    Report.error(
+        "Encoder "
+            + name
+            + ": configuration failed after "
+            + BOOT_ATTEMPTS
+            + " attempts ("
+            + status
+            + "). Check the CAN wiring, the id and the bus.");
   }
 
   @Override
