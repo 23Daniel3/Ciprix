@@ -1,6 +1,6 @@
-# Publica a Ciprix como vendordep: o repositorio Maven vai para gh-pages/repo e os arquivos
-# Ciprix*.json para a raiz da gh-pages, servidos em https://23daniel3.github.io/Ciprix/.
-# Roda quando uma release e publicada (tag v<ciprixVersion>) ou manualmente com uma tag.
+# Publishes Ciprix as a vendordep: the Maven repository goes to gh-pages/repo and the
+# Ciprix*.json files to the root of gh-pages, served at https://23daniel3.github.io/Ciprix/.
+# Runs when a release is published (tag v<ciprixVersion>) or manually with a tag.
 name: Publish
 
 on:
@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Tag a publicar (por exemplo v2026.2.0)'
+        description: 'Tag to publish (for example v2026.2.0)'
         required: true
 
 concurrency:
@@ -21,12 +21,12 @@ permissions:
 
 jobs:
   publish:
-    name: Publicar no gh-pages
+    name: Publish to gh-pages
     runs-on: ubuntu-latest
     env:
       TAG: ${{ github.event.release.tag_name || inputs.tag }}
     steps:
-      - name: Checkout da tag
+      - name: Checkout the tag
         uses: actions/checkout@v5
         with:
           ref: ${{ env.TAG }}
@@ -37,58 +37,58 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Conferir versao
+      - name: Check version
         run: |
           VERSION=$(grep '^ciprixVersion=' gradle.properties | cut -d= -f2 | tr -d '[:space:]')
           echo "ciprixVersion=$VERSION, tag=$TAG"
           if [ "v$VERSION" != "$TAG" ]; then
-            echo "::error::A tag $TAG nao bate com ciprixVersion=$VERSION em gradle.properties."
+            echo "::error::Tag $TAG does not match ciprixVersion=$VERSION in gradle.properties."
             exit 1
           fi
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
-      - name: Build, testes e publicacao local
+      - name: Build, tests and local publish
         run: |
           chmod +x gradlew
           ./gradlew build publish generateVendordeps --max-workers 2
 
-      - name: Checkout da gh-pages
+      - name: Checkout gh-pages
         uses: actions/checkout@v5
         with:
           ref: gh-pages
           path: gh-pages
 
-      - name: Atualizar gh-pages
+      - name: Update gh-pages
         run: |
           mkdir -p gh-pages/repo
-          # O repositorio Maven acumula as versoes: as antigas continuam disponiveis.
+          # The Maven repository accumulates versions: older ones stay available.
           cp -r build/repos/releases/. gh-pages/repo/
-          # A raiz sempre tem a versao mais recente (e o que o VS Code baixa pelo jsonUrl).
+          # The root always has the latest version (it's what VS Code downloads via jsonUrl).
           cp build/vendordeps/*.json gh-pages/
-          # Copia versionada, para quem quiser fixar uma versao.
+          # Versioned copy, for anyone who wants to pin a version.
           mkdir -p "gh-pages/vendordeps/$VERSION"
           cp build/vendordeps/*.json "gh-pages/vendordeps/$VERSION/"
           touch gh-pages/.nojekyll
           {
             echo "<!doctype html><meta charset=utf-8><title>Ciprix</title>"
             echo "<h1>Ciprix $VERSION</h1>"
-            echo "<p>Instale pelo VS Code da WPILib: Manage Vendor Libraries &rarr; Install new library (online).</p><ul>"
+            echo "<p>Install from the WPILib VS Code extension: Manage Vendor Libraries &rarr; Install new library (online).</p><ul>"
             for f in build/vendordeps/*.json; do
               n=$(basename "$f")
               echo "<li><a href=\"$n\">https://23daniel3.github.io/Ciprix/$n</a></li>"
             done
-            echo "</ul><p>Reposit&oacute;rio Maven: <code>https://23daniel3.github.io/Ciprix/repo</code></p>"
+            echo "</ul><p>Maven repository: <code>https://23daniel3.github.io/Ciprix/repo</code></p>"
           } > gh-pages/index.html
 
-      - name: Commit e push
+      - name: Commit and push
         working-directory: gh-pages
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           if git diff --cached --quiet; then
-            echo "Nada mudou na gh-pages."
+            echo "Nothing changed on gh-pages."
             exit 0
           fi
-          git commit -m "Publica Ciprix $VERSION"
+          git commit -m "Publish Ciprix $VERSION"
           git push origin gh-pages
