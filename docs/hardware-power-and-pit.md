@@ -1,3 +1,7 @@
+---
+sidebar_position: 20
+---
+
 # Hardware, power and pit
 
 ## Hardware alerts and the blinking screen

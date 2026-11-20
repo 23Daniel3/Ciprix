@@ -1,3 +1,7 @@
+---
+sidebar_position: 80
+---
+
 # 3D robot in AdvantageScope
 
 Ciprix shows the team's CAD in AdvantageScope with moving parts following the real mechanisms

@@ -1,3 +1,7 @@
+---
+sidebar_position: 31
+---
+
 # Driving helpers
 
 Package `org.ciprix.util.drivetrain`. Small, composable pieces that sit between the driver's
