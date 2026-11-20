@@ -120,7 +120,7 @@ class BasicMotorBaseTest {
       motor.read();
     }
     assertEquals(1, motor.calls.size());
-    env.now += 0.02;
+    env.now += 0.04; // 0.52 s: past the refresh period without depending on rounding
     motor.read();
     assertEquals(List.of("V 6.0", "V 6.0"), motor.calls);
   }
