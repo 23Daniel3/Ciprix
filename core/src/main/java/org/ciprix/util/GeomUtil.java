@@ -1,3 +1,12 @@
+// Copyright (c) 2023 FRC 6328
+// http://github.com/Mechanical-Advantage
+//
+// Use of this source code is governed by an MIT-style
+// license that can be found in the LICENSE file at
+// the root directory of this project.
+// Modified for Ciprix, 2026
+// (The license above is the original project's; see NOTICE.md.)
+
 package org.ciprix.util;
 
 import edu.wpi.first.math.geometry.*;

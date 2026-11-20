@@ -109,4 +109,23 @@ The workflow refuses to publish if the tag doesn't match `ciprixVersion`.
 
 ## License
 
-Code derived from the WPILib templates follows the [WPILib license](./WPILib-License.md).
+Ciprix is free software under the **GNU General Public License v3.0** ([`LICENSE`](./LICENSE)).
+In plain terms:
+
+- Your team can use the library in its robot code, in competition and in the pit, at no cost.
+- If you distribute a **modified version** of Ciprix (or a program that includes Ciprix code),
+  you must keep it under the GPLv3 and publish the source code of your version.
+- Keep the copyright notices, including those in the files that came from other projects.
+
+This is a summary, not legal advice; the license text is what counts.
+
+Ciprix stands on other teams' and projects' work, and credits them:
+
+- **FRC 6328 Mechanical Advantage / Littleton Robotics**: [AdvantageKit](https://github.com/Mechanical-Advantage/AdvantageKit)
+  (which `Ciprix.json` requires, and which Ciprix does not embed) and a few utility classes
+  adapted from their templates and robot code.
+- **WPILib**: code derived from the WPILib templates follows the
+  [WPILib license](./WPILib-License.md).
+- **PathPlanner** (Michael Jansen): the AdvantageKit pathfinding example.
+
+Each derived file, its original and its license are listed in [`NOTICE.md`](./NOTICE.md).
