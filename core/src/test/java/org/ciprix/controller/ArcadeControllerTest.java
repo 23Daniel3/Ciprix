@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj.simulation.JoystickSim;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import org.junit.jupiter.api.BeforeAll;
@@ -26,9 +25,8 @@ class ArcadeControllerTest {
     ArcadeController arcade = new ArcadeController(3);
     JoystickSim sim = new JoystickSim(arcade.getJoystick());
     sim.setButtonCount(16);
-    sim.setButton(5, true);
+    sim.setRawButton(5, true);
     sim.notifyNewData();
-    DriverStationSim.notifyNewData();
     DriverStation.refreshData();
 
     assertTrue(arcade.button5().getAsBoolean());
