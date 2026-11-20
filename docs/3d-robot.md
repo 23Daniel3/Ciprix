@@ -36,8 +36,9 @@ bolts, no small holes) and consider not versioning the `.glb` files (or using Gi
 
 ## 2. Register the part in code
 
-Each moving part is registered once, in `RobotContainer.configureVisualizer()`, with its model
-number and the point it rotates around:
+Each moving part is registered once, with its model number and the point it rotates around. The
+template doesn't ship a visualizer, so add the registration to your own `RobotContainer`, for
+example in a `configureVisualizer()` method that the constructor calls:
 
 ```java
 // model_0.glb: the intake, rotating around the pivot axis.
