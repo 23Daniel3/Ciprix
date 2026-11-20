@@ -18,16 +18,23 @@ self-test.
 ## Install on a robot
 
 In the WPILib VS Code extension, use **WPILib: Manage Vendor Libraries → Install new library
-(online)** and paste the Ciprix vendordep URL:
+(online)** and install **`Ciprix.json`**:
 
 | Vendordep | URL | Contents |
 | --- | --- | --- |
 | `Ciprix.json` | `https://23daniel3.github.io/Ciprix/Ciprix.json` | FSM, `CiprixRobot`, `StateSubsystem`, motor and encoder abstractions (CTRE Phoenix 6/5, REV, PWM), PathPlanner/Choreo utilities, simulation, vision, logging, power and self-test |
 
-Ciprix requires the **AdvantageKit** and **WPILibNewCommands** vendordeps, plus the official
-vendordep for whichever hardware or path library your robot actually uses (Phoenix 6, Phoenix 5,
-REVLib, PathPlannerLib). Unused vendor integrations are never loaded at runtime, so you only need
-to install the libraries for the hardware on your robot.
+Because `Ciprix.json` declares **AdvantageKit** and **WPILibNewCommands** in its `"requires"` block,
+VS Code automatically offers to install AdvantageKit for you if it is not already in the project.
+Beyond `Ciprix.json`, only install the official vendordep for the hardware or path library your
+robot actually uses (Phoenix 6, Phoenix 5, REVLib, PathPlannerLib)—unused vendor integrations are
+never loaded at runtime.
+
+> **Migrating from 2026.2.0:** `Ciprix.json` now bundles every Ciprix module (`ciprix-core`,
+> `ciprix-ctre`, `ciprix-rev`, `ciprix-phoenix5`, `ciprix-pathplanner`) and `commons-math3`. Delete
+> any old `vendordeps/Ciprix-*.json` files (`Ciprix-CTRE.json`, `Ciprix-REV.json`,
+> `Ciprix-Phoenix5.json`, `Ciprix-PathPlanner.json`) when updating `Ciprix.json` so artifacts are
+> not duplicated on the classpath.
 
 The annotation processor (generates each subsystem's `XxxCommands`) goes in `build.gradle`:
 

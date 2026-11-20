@@ -3,6 +3,7 @@ package org.ciprix;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import java.time.Instant;
 import org.ciprix.CiprixSettings.Mode;
 import org.ciprix.util.PreMatchChecklist;
 import org.littletonrobotics.junction.AutoLogOutputManager;
@@ -28,8 +29,15 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
  *   <li>Installs the default pre-match checks ({@link PreMatchChecklist#addDefaults()}).
  *   <li>Runs {@link CommandScheduler} every cycle and manages the autonomous command lifecycle.
  * </ul>
+ *
+ * <p>The lifecycle methods ({@link #robotPeriodic()}, {@link #autonomousInit()}, {@link
+ * #teleopInit()} and {@link #testInit()}) are {@code final} so the scheduler can never be turned
+ * off by accident; override {@link #periodic()}, {@link #autonomousStart()}, {@link #teleopStart()}
+ * or {@link #testStart()} when extra robot-level hooks are needed.
  */
 public abstract class CiprixRobot extends LoggedRobot {
+
+  private static volatile Runnable loggerStarter = null;
 
   private Command autonomousCommand;
 
@@ -38,7 +46,7 @@ public abstract class CiprixRobot extends LoggedRobot {
    * live tuning disabled by default.
    */
   protected CiprixRobot() {
-    this(Mode.SIM, false);
+    this(Mode.SIM, false, CiprixSettings.getLoopPeriodSeconds());
   }
 
   /**
@@ -48,7 +56,7 @@ public abstract class CiprixRobot extends LoggedRobot {
    * @param desktopMode mode used when {@link RobotBase#isReal()} is {@code false}
    */
   protected CiprixRobot(Mode desktopMode) {
-    this(desktopMode, false);
+    this(desktopMode, false, CiprixSettings.getLoopPeriodSeconds());
   }
 
   /**
@@ -58,8 +66,20 @@ public abstract class CiprixRobot extends LoggedRobot {
    * @param tuningMode {@code true} to publish and allow live editing of tunable numbers
    */
   protected CiprixRobot(Mode desktopMode, boolean tuningMode) {
-    super(CiprixSettings.getLoopPeriodSeconds());
+    this(desktopMode, tuningMode, CiprixSettings.getLoopPeriodSeconds());
+  }
 
+  /**
+   * Creates a Ciprix robot with explicit desktop mode, live-tuning flag and main-loop period.
+   *
+   * @param desktopMode mode used when {@link RobotBase#isReal()} is {@code false}
+   * @param tuningMode {@code true} to publish and allow live editing of tunable numbers
+   * @param loopPeriodSeconds nominal period of the main robot loop, in seconds
+   */
+  protected CiprixRobot(Mode desktopMode, boolean tuningMode, double loopPeriodSeconds) {
+    super(loopPeriodSeconds);
+
+    CiprixSettings.setLoopPeriodSeconds(loopPeriodSeconds);
     Mode effectiveMode =
         RobotBase.isReal() ? Mode.REAL : (desktopMode != null ? desktopMode : Mode.SIM);
     CiprixSettings.setMode(effectiveMode);
@@ -82,9 +102,34 @@ public abstract class CiprixRobot extends LoggedRobot {
    * is started and before subclass fields (such as {@code RobotContainer}) are initialized.
    *
    * <p>Override this method to adjust {@link CiprixSettings} (field dimensions, controller
-   * deadband, default alliance, loop period) or record extra {@link Logger#recordMetadata} entries.
+   * deadband, default alliance) or record extra {@link Logger#recordMetadata} entries. To use a
+   * non-default loop period, pass it to {@link #CiprixRobot(Mode, boolean, double)}.
    */
   protected void configure() {}
+
+  /**
+   * Optional hook called at the end of every {@link #robotPeriodic()} cycle, after {@link
+   * CommandScheduler#run()}.
+   */
+  protected void periodic() {}
+
+  /**
+   * Optional hook called at the end of {@link #autonomousInit()}, after scheduling {@link
+   * #getAutonomousCommand()}.
+   */
+  protected void autonomousStart() {}
+
+  /**
+   * Optional hook called at the end of {@link #teleopInit()}, after cancelling the autonomous
+   * command.
+   */
+  protected void teleopStart() {}
+
+  /**
+   * Optional hook called at the end of {@link #testInit()}, after cancelling all scheduled
+   * commands.
+   */
+  protected void testStart() {}
 
   /** Project name recorded in the AdvantageKit log metadata. */
   protected String getProjectName() {
@@ -106,6 +151,12 @@ public abstract class CiprixRobot extends LoggedRobot {
 
   private void startAdvantageKit() {
     Logger.recordMetadata("ProjectName", getProjectName());
+    Logger.recordMetadata("BuildTime", Instant.now().toString());
+    Runnable customStarter = loggerStarter;
+    if (customStarter != null) {
+      customStarter.run();
+      return;
+    }
     switch (CiprixSettings.getMode()) {
       case REAL -> {
         Logger.addDataReceiver(new WPILOGWriter(getLogDirectory()));
@@ -122,28 +173,45 @@ public abstract class CiprixRobot extends LoggedRobot {
     Logger.start();
   }
 
-  @Override
-  public void robotPeriodic() {
-    CommandScheduler.getInstance().run();
+  /**
+   * Replaces the AdvantageKit receiver/thread startup (intended for unit tests so {@code
+   * Logger.start()} does not hijack {@code Timer.getFPGATimestamp()} or open NetworkTables ports).
+   */
+  static void setLoggerStarterForTesting(Runnable starter) {
+    loggerStarter = starter;
+  }
+
+  /** Restores normal AdvantageKit startup. */
+  static void resetLoggerStarterForTesting() {
+    loggerStarter = null;
   }
 
   @Override
-  public void autonomousInit() {
+  public final void robotPeriodic() {
+    CommandScheduler.getInstance().run();
+    periodic();
+  }
+
+  @Override
+  public final void autonomousInit() {
     autonomousCommand = getAutonomousCommand();
     if (autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(autonomousCommand);
     }
+    autonomousStart();
   }
 
   @Override
-  public void teleopInit() {
+  public final void teleopInit() {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+    teleopStart();
   }
 
   @Override
-  public void testInit() {
+  public final void testInit() {
     CommandScheduler.getInstance().cancelAll();
+    testStart();
   }
 }
