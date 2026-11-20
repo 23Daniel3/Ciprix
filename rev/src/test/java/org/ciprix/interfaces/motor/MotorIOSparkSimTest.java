@@ -8,8 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.revrobotics.spark.ClosedLoopSlot;
-import com.revrobotics.spark.SparkBase;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkBaseConfigAccessor;
 import edu.wpi.first.hal.HAL;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,8 +64,15 @@ class MotorIOSparkSimTest {
     return config;
   }
 
-  private static void assertConfigured(SparkBase spark) {
-    var accessor = spark.configAccessor;
+  private static void assertConfigured(SparkMax spark) {
+    assertConfigured(spark.configAccessor);
+  }
+
+  private static void assertConfigured(SparkFlex spark) {
+    assertConfigured(spark.configAccessor);
+  }
+
+  private static void assertConfigured(SparkBaseConfigAccessor accessor) {
     assertTrue(accessor.getInverted());
     assertEquals(IdleMode.kBrake, accessor.getIdleMode());
     assertEquals(35, accessor.getSmartCurrentLimit());
@@ -99,11 +108,13 @@ class MotorIOSparkSimTest {
     motor.setBrakeMode(true);
     motor.setCurrentLimit(Amps.of(20));
     // Runtime changes are sent asynchronously.
-    for (int i = 0; i < 100 && motor.motor.configAccessor.getSmartCurrentLimit() != 20; i++) {
+    for (int i = 0;
+        i < 100 && ((SparkMax) motor.motor).configAccessor.getSmartCurrentLimit() != 20;
+        i++) {
       Thread.sleep(10);
     }
-    assertEquals(20, motor.motor.configAccessor.getSmartCurrentLimit());
-    assertEquals(IdleMode.kBrake, motor.motor.configAccessor.getIdleMode());
+    assertEquals(20, ((SparkMax) motor.motor).configAccessor.getSmartCurrentLimit());
+    assertEquals(IdleMode.kBrake, ((SparkMax) motor.motor).configAccessor.getIdleMode());
   }
 
   @Test
@@ -117,7 +128,7 @@ class MotorIOSparkSimTest {
   @Test
   void coastIsTheDefault() {
     MotorIOSparkMax motor = new MotorIOSparkMax("SimMax" + nextId, nextId++, new MotorConfig());
-    assertEquals(IdleMode.kCoast, motor.motor.configAccessor.getIdleMode());
-    assertFalse(motor.motor.configAccessor.getInverted());
+    assertEquals(IdleMode.kCoast, ((SparkMax) motor.motor).configAccessor.getIdleMode());
+    assertFalse(((SparkMax) motor.motor).configAccessor.getInverted());
   }
 }
