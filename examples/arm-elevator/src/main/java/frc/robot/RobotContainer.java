@@ -1,6 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -67,10 +66,6 @@ public class RobotContainer {
     // Co-driver: manual backup, only while the button is held.
     copilot.a().whileTrue(ArmCommands.stow(arm));
     copilot.b().whileTrue(ArmCommands.score(arm));
-
-    // Pit self-tests (robot enabled, mechanisms free to move).
-    SmartDashboard.putData("SelfTest/Arm", arm.selfTestCommand());
-    SmartDashboard.putData("SelfTest/Elevator", elevator.selfTestCommand());
   }
 
   /**

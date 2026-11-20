@@ -1,8 +1,9 @@
 # Example: arm and elevator
 
 A robot with two position-controlled mechanisms, built on the same pattern as the
-[skeleton](../../templates/skeleton): requests, states, IO, generated relay, co-driver backup,
-self-test.
+[skeleton](../../templates/skeleton): requests, states, IO, generated relay and co-driver backup.
+There is no pit self-test here on purpose: it spins the motor freely, and an arm or an elevator
+would hit its hard stop (see [Hardware, power and pit](../../docs/hardware-power-and-pit.md)).
 
 | What | Where |
 | --- | --- |
@@ -11,7 +12,6 @@ self-test.
 | A trip as two states: a "moving" state that sends the motor and a "resting" state entered when `atSetpoint` | `Arm.java`, `Elevator.java` |
 | Safe order of movement between mechanisms (elevator up before the arm swings out, arm in before the elevator comes down) | `SuperStructure.java` |
 | 3D robot: elevator carriage with the arm mounted on it | `RobotContainer.configureVisualizer()` |
-| Pit self-test for both mechanisms | `SelfTest/Arm`, `SelfTest/Elevator` on the dashboard |
 
 ## Controls (controller 0)
 
