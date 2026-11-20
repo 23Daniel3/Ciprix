@@ -26,6 +26,14 @@ jobs:
             dir: .
           - name: Template skeleton
             dir: templates/skeleton
+          - name: Example arm-elevator
+            dir: examples/arm-elevator
+          - name: Example rev-and-phoenix5
+            dir: examples/rev-and-phoenix5
+          - name: Example swerve-vision
+            dir: examples/swerve-vision
+          - name: Example power-and-pit
+            dir: examples/power-and-pit
     defaults:
       run:
         working-directory: ${{ matrix.dir }}
