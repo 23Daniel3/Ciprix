@@ -283,6 +283,15 @@ public class MotorConfig extends BasicMotorConfig {
     return this;
   }
 
+  /**
+   * Attaches an external {@link EncoderIO} to the motor.
+   *
+   * <p>Note: when a {@link org.ciprix.interfaces.encoder.EncoderIOCANcoder} is passed here for a
+   * Talon's hardware feedback loop ({@code REMOTE_CANCODER}, {@code FUSED_CANCODER} or {@code
+   * SYNC_CANCODER}), the Talon reads the CANcoder directly over CAN and does not see software
+   * offsets configured in {@link org.ciprix.interfaces.encoder.EncoderConfig#offset}. Leave the
+   * software offset at zero and seed the position with {@code setPosition} / {@code setOffset}.
+   */
   public MotorConfig withExternalEncoder(EncoderIO encoder, FeedbackSensorType fusionType) {
     this.externalEncoder = encoder;
     this.externalFusionType = fusionType;

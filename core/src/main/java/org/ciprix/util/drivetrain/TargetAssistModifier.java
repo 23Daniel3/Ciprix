@@ -3,6 +3,14 @@ package org.ciprix.util.drivetrain;
 import edu.wpi.first.math.geometry.Translation2d;
 import java.util.function.Supplier;
 
+/**
+ * Blends the driver's translation stick with a unit vector pointing toward a field target.
+ *
+ * <p>Because the target vector has magnitude {@code weight} even when the stick is centered, this
+ * modifier pulls the robot toward the target whenever it is active. Gate it behind a held button
+ * (for example {@code pilot.leftBumper().getAsBoolean() ? assist.apply(ctx, in) : in}) rather than
+ * leaving it unconditionally in the modifier chain.
+ */
 public class TargetAssistModifier implements TranslationModifier {
   private final Supplier<Translation2d> targetSupplier;
   private final double weight; // 0.0 to 1.0

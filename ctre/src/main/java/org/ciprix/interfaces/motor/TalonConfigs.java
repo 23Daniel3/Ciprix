@@ -228,6 +228,16 @@ final class TalonConfigs {
                 + " sensor.");
         return FeedbackSensorType.INTERNAL;
       }
+      if (config.externalEncoder instanceof org.ciprix.interfaces.encoder.EncoderIOCANcoder cancoder
+          && Math.abs(cancoder.getSoftwareOffset().in(Rotations)) > 1e-9) {
+        Report.warning(
+            "Motor "
+                + name
+                + ": EncoderIOCANcoder software offset ("
+                + cancoder.getSoftwareOffset().in(Rotations)
+                + " rot) is not applied to the Talon's hardware feedback loop; leave the CANcoder"
+                + " software offset at 0 and zero with setPosition/setOffset instead.");
+      }
       return type;
     }
     if (type == FeedbackSensorType.INTERNAL) {

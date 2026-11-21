@@ -126,10 +126,14 @@ public abstract class EncoderBase implements EncoderIO {
     return velocityFilter.calculate(instantaneous);
   }
 
+  /** Current software zero offset (in raw sensor rotations), including any live dashboard edits. */
+  public final Angle getSoftwareOffset() {
+    return softwareOffset;
+  }
+
   /**
    * Zeros this encoder by shifting the software offset so the current raw position reports as
-   * {@code position}. Sensors with a native hardware zero override this instead — more precise, and
-   * it survives brownouts/reboots where a software offset would not.
+   * {@code position}. Sensors with a native hardware zero override this instead.
    */
   @Override
   public void setPosition(Angle position) {
