@@ -1,0 +1,98 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.ciprix",
+    "module": "ciprix-pathplanner",
+    "version": "2026.3.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.11"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "org.ciprix",
+          "module": "ciprix-core",
+          "version": {
+            "requires": "2026.3.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "ciprix-pathplanner-2026.3.0.jar",
+          "url": "ciprix-pathplanner-2026.3.0.jar",
+          "size": 5672,
+          "sha512": "44d556feee6602f268a98b560625c8796a88a9a23e0b70f29027040f793d9a3974bf184ca323710fa379ee9dbafecd7e44f641d57d1d84590995c306483d6b0d",
+          "sha256": "cfff7a4ff048a32591fa83da33a8a49f6bd47490297c8465d35479adece8f50f",
+          "sha1": "6e056dae668c4d1e64a1545ee5d182aae7311d63",
+          "md5": "de186fd8f0b32d6917adf9da311a51af"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "org.ciprix",
+          "module": "ciprix-core",
+          "version": {
+            "requires": "2026.3.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "ciprix-pathplanner-2026.3.0.jar",
+          "url": "ciprix-pathplanner-2026.3.0.jar",
+          "size": 5672,
+          "sha512": "44d556feee6602f268a98b560625c8796a88a9a23e0b70f29027040f793d9a3974bf184ca323710fa379ee9dbafecd7e44f641d57d1d84590995c306483d6b0d",
+          "sha256": "cfff7a4ff048a32591fa83da33a8a49f6bd47490297c8465d35479adece8f50f",
+          "sha1": "6e056dae668c4d1e64a1545ee5d182aae7311d63",
+          "md5": "de186fd8f0b32d6917adf9da311a51af"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "ciprix-pathplanner-2026.3.0-sources.jar",
+          "url": "ciprix-pathplanner-2026.3.0-sources.jar",
+          "size": 3539,
+          "sha512": "5bf0786e2b8ca0a599320a48196158194e636520c88a77f98fec3e9f424122a5e3b647e5a43d69cd9b944309f346d66396261416294a250dd89baf889590c1db",
+          "sha256": "c63985f298b123c74b0c9837979fde301fe0065ddb1d5cb3947642844d7d572c",
+          "sha1": "5a4cc254b7774b0a5e75c5ac781b583b4b8fed86",
+          "md5": "7e46341f5f494b40a459d855babd89c5"
+        }
+      ]
+    }
+  ]
+}

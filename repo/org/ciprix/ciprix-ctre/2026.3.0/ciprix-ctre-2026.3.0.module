@@ -1,0 +1,98 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.ciprix",
+    "module": "ciprix-ctre",
+    "version": "2026.3.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.11"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "org.ciprix",
+          "module": "ciprix-core",
+          "version": {
+            "requires": "2026.3.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "ciprix-ctre-2026.3.0.jar",
+          "url": "ciprix-ctre-2026.3.0.jar",
+          "size": 36404,
+          "sha512": "1d1f668afa1b63c0bd931f63198aeac0802be938ba8c4534e354e4a7b968a8386757df22e4c0a78702a02dbde1d0eb6bf6134da98d159b01981048f892d5e9d6",
+          "sha256": "c0f3d3673d2555af026f2356f9b177b9f7fe4191878c90de55908eb4acf813e9",
+          "sha1": "2dfd7892a0ad77a81a4751a54d77e57f0b8dc764",
+          "md5": "8ff83b91ec78e83e6fd363ecdaa0d47d"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "org.ciprix",
+          "module": "ciprix-core",
+          "version": {
+            "requires": "2026.3.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "ciprix-ctre-2026.3.0.jar",
+          "url": "ciprix-ctre-2026.3.0.jar",
+          "size": 36404,
+          "sha512": "1d1f668afa1b63c0bd931f63198aeac0802be938ba8c4534e354e4a7b968a8386757df22e4c0a78702a02dbde1d0eb6bf6134da98d159b01981048f892d5e9d6",
+          "sha256": "c0f3d3673d2555af026f2356f9b177b9f7fe4191878c90de55908eb4acf813e9",
+          "sha1": "2dfd7892a0ad77a81a4751a54d77e57f0b8dc764",
+          "md5": "8ff83b91ec78e83e6fd363ecdaa0d47d"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "ciprix-ctre-2026.3.0-sources.jar",
+          "url": "ciprix-ctre-2026.3.0-sources.jar",
+          "size": 20560,
+          "sha512": "c6f8e93c4adad95ab38f64129eb8c8d5e26478af25f5db8df5584a62950a87685175701f9360e6ed7b7d5d6ceb3ebab1d8ac769b00800d9a1a73b832cd10b76f",
+          "sha256": "8319d2ea45efa0d1d28ba4aff4a8c588cd77f1102c293d4a8fa708dd23813c06",
+          "sha1": "3a1458815df8f10d04828b19263a4c9ec895c506",
+          "md5": "942bd61b3840bc2ba27c58fa02b17db5"
+        }
+      ]
+    }
+  ]
+}
