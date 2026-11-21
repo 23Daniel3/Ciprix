@@ -7,13 +7,19 @@ sidebar_position: 110
 Ciprix stands on the work of other open-source projects. Please credit them in your own robot
 code and documentation too.
 
+## Author
+
+Developed by **Daniel Cipriani**, who wrote the Ciprix library and designed its logo.
+
 ## License of Ciprix
 
 Ciprix is free software under the **GNU General Public License v3.0**
 ([LICENSE](https://github.com/23Daniel3/Ciprix/blob/main/LICENSE)). Teams can use it in their
-robot code. Anyone who distributes a modified version must keep the GPLv3 and publish the source.
-The [NOTICE](https://github.com/23Daniel3/Ciprix/blob/main/NOTICE.md) file lists every file
-derived from other projects, with its original, author and license.
+robot code and link it with the WPILib and vendor libraries installed by their robot project
+(AdvantageKit, CTRE Phoenix, REVLib, PathPlannerLib). Anyone who distributes a modified version
+must keep the GPLv3 and publish the source. The
+[NOTICE](https://github.com/23Daniel3/Ciprix/blob/main/NOTICE.md) file lists every file derived
+from other projects, with its original, author and license.
 
 ## AdvantageKit (FRC 6328 Mechanical Advantage)
 

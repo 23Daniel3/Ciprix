@@ -46,7 +46,8 @@ String chosen = startPosition.get();
 
 `LoggedSequentialDashboardChooser<V>` is a chain of N choosers, one per step of an autonomous
 routine, where each slot can filter the options of the next (for example, only the scoring spots
-reachable from the chosen start). Call `periodic()` from `robotPeriodic()`.
+reachable from the chosen start). Call `periodic()` from `Robot.periodic()` (or register it with
+`RobotLoop.addPeriodic`).
 
 ```java
 var chooser = new LoggedSequentialDashboardChooser<Supplier<Command>>("Auto/Step", 3);

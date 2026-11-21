@@ -38,20 +38,25 @@ A `TranslationModifier` is one method: `Translation2d apply(DriveContext, Transl
 | Modifier | Effect |
 | --- | --- |
 | `ThrottleMapModifier` | Non-linear stick curve (fine control at low speed). |
-| `TargetAssistModifier(targetSupplier, weight)` | Blends the stick toward a field target. |
+| `TargetAssistModifier(targetSupplier, weight)` | Blends the stick toward a field target. Pulls with magnitude `weight` even when the stick is centered, so gate it behind a held button. |
 | `ZoneSuctionModifier(zone, strength)` | Inside the zone, pulls the robot through its center line and across it. |
 | `ZoneRepulsionModifier(zone, strength)` | Pushes the robot away from a zone it should not enter. |
 | `DualZoneSuctionBumpModifier(zoneA, zoneB, strength)` | Guides the robot from one zone to the other (crossing a bump, for example). |
 
-Chain them in order:
+Chain them in order (as in the [`swerve-vision`](https://github.com/23Daniel3/Ciprix/tree/main/examples/swerve-vision) example):
 
 ```java
+TranslationModifier targetAssist =
+    new TargetAssistModifier(() -> AllianceFlipUtil.apply(DriveConstants.TARGET), 0.35);
+
 List<TranslationModifier> modifiers = List.of(
     new ThrottleMapModifier(),
     new ZoneRepulsionModifier(wallZone, 0.6),
-    new TargetAssistModifier(() -> FieldPositions.hub(), 0.3));
+    // Hold the left bumper to pull the robot toward the target.
+    (context, input) ->
+        pilot.leftBumper().getAsBoolean() ? targetAssist.apply(context, input) : input);
 
-Translation2d input = UtilCalculus.getLinearVelocityFromJoysticks(driver.getLeftY(), driver.getLeftX());
+Translation2d input = UtilCalculus.getLinearVelocityFromJoysticks(pilot.getLeftY(), pilot.getLeftX());
 for (TranslationModifier m : modifiers) {
   input = m.apply(drive, input);
 }
