@@ -41,8 +41,11 @@ bolts, no small holes) and consider not versioning the `.glb` files (or using Gi
 ## 2. Register the part in code
 
 Each moving part is registered once, with its model number and the point it rotates around. The
-template doesn't ship a visualizer, so add the registration to your own `RobotContainer`, for
-example in a `configureVisualizer()` method that the constructor calls:
+minimal [`templates/skeleton`](https://github.com/23Daniel3/Ciprix/tree/main/templates/skeleton)
+doesn't ship a visualizer, while the
+[`examples/arm-elevator`](https://github.com/23Daniel3/Ciprix/tree/main/examples/arm-elevator)
+example has a complete `RobotContainer.configureVisualizer()` with an elevator carriage and a
+carriage-mounted arm. Add the registration to your own `RobotContainer`:
 
 ```java
 // model_0.glb: the intake, rotating around the pivot axis.

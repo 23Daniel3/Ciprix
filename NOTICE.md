@@ -11,7 +11,7 @@ WPILib-derived code follows the [WPILib license](./WPILib-License.md).
 
 ## Author
 
-The Ciprix library and its logo are by **Daniel Cipriani**.
+Developed by **Daniel Cipriani**, who wrote the Ciprix library and designed its logo.
 
 ## Files derived from other projects
 

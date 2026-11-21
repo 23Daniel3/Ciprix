@@ -81,6 +81,6 @@ CANHealthMonitor can = new CANHealthMonitor("rio",
     new CANHealthMonitor.CANDeviceStatus("Gyro", 1, imu::isConnected),
     new CANHealthMonitor.CANDeviceStatus("FL Drive", 2, flDrive::isConnected));
 
-// robotPeriodic:
+// In Robot.periodic() (or registered with RobotLoop.addPeriodic):
 can.checkHealth();
 ```

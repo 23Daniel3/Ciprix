@@ -7,7 +7,7 @@ sidebar_position: 100
 Versions follow `<season>.<minor>.<patch>`. Every release is on
 [GitHub](https://github.com/23Daniel3/Ciprix/releases), where the full changelog lives.
 
-## 2026.3.0 (upcoming)
+## 2026.3.0
 
 The final Ciprix release for the 2026 season. Setup is simpler: one vendordep and one base class.
 It also adds more than 40 test classes and fixes the bugs those tests found.
@@ -53,6 +53,10 @@ It also adds more than 40 test classes and fixes the bugs those tests found.
 - `AntiTippingAccel` reads the nominal limits once and restores them correctly; `reset()` clears
   all state; new `getLastState()` for logging.
 - `SuperStructureBase` rejects a null initial request before the subsystem is registered.
+- CTRE: `EncoderIOCANcoder` retries its boot configuration (up to 5 attempts) and reports an error
+  when the device never answers; `setPosition` now accounts for the software offset and position
+  conversion factor; `TalonConfigs` warns when a CANcoder with a software offset is used as Talon
+  hardware feedback.
 - REV: SPARKs no longer print the REVLib "kG is overriden by kCos" warning on every boot.
 
 ### Additions
@@ -68,9 +72,10 @@ Pure-logic tests (filters, zones, slew limiters, detectors, alliance flip, drive
 anti-tipping, encoders, SuperStructure, motors, tunables, shot calculator, controllers) and
 hardware tests on the vendor simulators (Phoenix 6, REVLib, Phoenix 5 and every PWM motor type).
 
-## 2026.2.1
+## 2026.2.1 (unreleased, included in 2026.3.0)
 
-Documentation release: all guides and code comments were translated to English.
+Internal documentation milestone (not tagged as a standalone GitHub release; included in 2026.3.0):
+all guides and code comments were translated to English.
 
 ## 2026.2.0
 
