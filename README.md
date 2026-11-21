@@ -116,7 +116,9 @@ The workflow refuses to publish if the tag doesn't match `ciprixVersion`.
 Ciprix is free software under the **GNU General Public License v3.0** ([`LICENSE`](./LICENSE)).
 In plain terms:
 
-- Your team can use the library in its robot code, in competition and in the pit, at no cost.
+- Your team can use the library in its robot code, in competition and in the pit, at no cost, and
+  combine it with the WPILib and vendor libraries installed by your robot project (AdvantageKit,
+  CTRE Phoenix, REVLib, PathPlannerLib).
 - If you distribute a **modified version** of Ciprix (or a program that includes Ciprix code),
   you must keep it under the GPLv3 and publish the source code of your version.
 - Keep the copyright notices, including those in the files that came from other projects.
@@ -134,4 +136,4 @@ Ciprix stands on other teams' and projects' work, and credits them:
 
 Each derived file, its original and its license are listed in [`NOTICE.md`](./NOTICE.md).
 
-**Author:** Daniel Cipriani, who wrote the Ciprix library and designed its logo.
+**Author:** Developed by Daniel Cipriani, who wrote the Ciprix library and designed its logo.
