@@ -213,6 +213,24 @@ class TalonConfigsTest {
   }
 
   @Test
+  void externalCanCoderWithSoftwareOffsetWarnsOnTalonFeedback() {
+    edu.wpi.first.hal.HAL.initialize(500, 0);
+    org.ciprix.interfaces.encoder.EncoderIOCANcoder cancoder =
+        new org.ciprix.interfaces.encoder.EncoderIOCANcoder(
+            "ArmCANcoder",
+            49,
+            new org.ciprix.interfaces.encoder.EncoderConfig().offsetRotations(0.25));
+    reports.clear();
+
+    MotorConfig config =
+        new MotorConfig().withExternalEncoder(cancoder, FeedbackSensorType.FUSED_CANCODER);
+    assertEquals(
+        FeedbackSensorType.FUSED_CANCODER, TalonConfigs.resolveSensor(config, "Arm", false));
+    assertEquals(1, reports.size());
+    assertTrue(reports.get(0).contains("software offset"));
+  }
+
+  @Test
   void dataPortSensorsOnlyExistOnTheTalonFxs() {
     MotorConfig config = new MotorConfig();
     config.feedbackType = FeedbackSensorType.ALTERNATE;

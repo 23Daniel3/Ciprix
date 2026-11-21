@@ -65,7 +65,8 @@ public class EncoderConfig {
   }
 
   /**
-   * Sets the absolute offset (software zero) in mechanism units.
+   * Sets the absolute offset (software zero) in raw sensor units (subtracted from the raw reading
+   * before {@link #positionConversionFactor} is applied).
    *
    * @param offset The desired offset as an {@link Angle}.
    * @return The updated EncoderConfig.
@@ -76,9 +77,9 @@ public class EncoderConfig {
   }
 
   /**
-   * Convenience for {@link #offset(Angle)} when you already have the value in rotations.
+   * Convenience for {@link #offset(Angle)} when you already have the value in raw sensor rotations.
    *
-   * @param rotations Desired offset, in rotations.
+   * @param rotations Desired offset, in raw sensor rotations.
    * @return The updated EncoderConfig.
    */
   public EncoderConfig offsetRotations(double rotations) {

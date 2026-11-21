@@ -18,7 +18,11 @@ import org.ciprix.util.Report;
  * Inversion is pushed into the hardware sensor-direction config so the sensor itself reports
  * correctly signed values from boot, before a subsystem's first periodic loop even runs. The offset
  * stays purely in {@link EncoderBase}'s software layer (not also baked into the hardware {@code
- * MagnetOffset}) so there's exactly one place it's applied.
+ * MagnetOffset}) so there's exactly one place it's applied. Because a Talon that reads this
+ * CANcoder directly over CAN ({@code withExternalEncoder} / {@code withRemoteCANcoder}) sees the
+ * raw CANcoder position without {@link EncoderBase}'s software offset, keep {@code
+ * EncoderConfig.offset} at zero when the CANcoder is used as Talon hardware feedback and zero via
+ * {@link #setPosition(Angle)} instead.
  */
 public class EncoderIOCANcoder extends EncoderBase {
 
@@ -80,19 +84,28 @@ public class EncoderIOCANcoder extends EncoderBase {
         CtreEncoderFaults.getCANcoderFaults(encoder));
   }
 
-  /** CAN id of the CANcoder (used by a Talon that reads it directly as feedback). */
   /** The underlying CANcoder, for vendor features the library does not wrap. */
   public CANcoder getCANcoder() {
     return encoder;
   }
 
+  /** CAN id of the CANcoder (used by a Talon that reads it directly as feedback). */
   public int getDeviceId() {
     return encoder.getDeviceID();
   }
 
   @Override
   public void setPosition(Angle position) {
-    // Hardware-level zero: more precise and survives brownouts, unlike a software offset.
-    encoder.setPosition(position.in(Rotations));
+    // Convert desired mechanism position back to the raw sensor frame expected by EncoderBase:
+    // reported = (raw - softwareOffset) * factor  =>  raw = position / factor + softwareOffset.
+    // Note: the CANcoder's relative position register resets to the absolute magnet reading if the
+    // sensor itself reboots or browns out.
+    double factor = config.positionConversionFactor != 0.0 ? config.positionConversionFactor : 1.0;
+    double rawRotations = position.in(Rotations) / factor + getSoftwareOffset().in(Rotations);
+    for (int attempt = 0; attempt < BOOT_ATTEMPTS; attempt++) {
+      if (encoder.setPosition(rawRotations, BOOT_TIMEOUT_SECONDS).isOK()) {
+        return;
+      }
+    }
   }
 }

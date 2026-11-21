@@ -39,8 +39,12 @@ class EncoderIOCANcoderSimTest {
       EncoderIOCANcoder encoder, double expectedRotations) throws InterruptedException {
     EncoderIO.EncoderIOInputs inputs = new EncoderIO.EncoderIOInputs();
     for (int i = 0; i < 100; i++) {
+      if (i > 0 && i % 10 == 0) {
+        encoder.setPosition(Rotations.of(expectedRotations));
+      }
       encoder.updateInputs(inputs);
-      if (Math.abs(inputs.position.in(Rotations) - expectedRotations) < 1e-3) {
+      if (inputs.isConnected
+          && Math.abs(inputs.position.in(Rotations) - expectedRotations) < 1e-3) {
         return inputs;
       }
       Thread.sleep(10);
@@ -72,9 +76,25 @@ class EncoderIOCANcoderSimTest {
   void hardwareZeroMovesTheReportedPosition() throws InterruptedException {
     EncoderIOCANcoder encoder =
         new EncoderIOCANcoder("SimCANcoder" + nextId, nextId++, new EncoderConfig());
+    encoder.getCANcoder().getSimState();
     encoder.setPosition(Rotations.of(0.3));
     EncoderIO.EncoderIOInputs inputs = readUntil(encoder, 0.3);
     assertEquals(0.3, inputs.position.in(Rotations), 1e-3);
+    assertTrue(inputs.isConnected);
+  }
+
+  @Test
+  void setPositionAccountsForSoftwareOffsetAndConversionFactor() throws InterruptedException {
+    EncoderIOCANcoder encoder =
+        new EncoderIOCANcoder(
+            "SimCANcoder" + nextId,
+            nextId++,
+            new EncoderConfig().offsetRotations(0.15).conversionFactors(2.0, 2.0));
+    encoder.getCANcoder().getSimState();
+    encoder.setPosition(Rotations.of(0.6));
+    EncoderIO.EncoderIOInputs inputs = readUntil(encoder, 0.6);
+    assertEquals(0.6, inputs.position.in(Rotations), 1e-3);
+    assertEquals(0.45, inputs.absolutePosition.in(Rotations), 1e-3);
     assertTrue(inputs.isConnected);
   }
 }
